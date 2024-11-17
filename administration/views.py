@@ -12,9 +12,9 @@ class AdminEventView(APIView):
     def get(request):
         return AdminEventService.get()
 
-
-    def post(self, request):
-        pass
+    @staticmethod
+    def post(request):
+        return AdminEventService.post(request.data)
 
     def put(self, request):
         pass
