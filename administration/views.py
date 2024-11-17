@@ -6,7 +6,7 @@ from common.services.service import EventService
 # These endpoints are for administration purposes only
 
 class AdminEventView(APIView):
-    # permission_classes = [IsAdmin]
+    permission_classes = [IsAdmin]
 
     @staticmethod
     def get(request):

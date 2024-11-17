@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
+from authentication.enum.role import Role
 
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)
@@ -9,6 +10,7 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
-    rol = models.CharField(max_length=100)
+    rol = models.IntegerField(choices=[(role.value, role.name) for role in Role], default=Role.PARTICIPANT.value)
+    phone = models.CharField(max_length=50)
     groups = models.ManyToManyField(Group, related_name='custom_user_set')
     user_permissions = models.ManyToManyField(Permission, related_name='custom_user_set_permissions')
