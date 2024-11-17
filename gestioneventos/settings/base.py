@@ -30,6 +30,7 @@ BASE_APPS = [
 LOCAL_APPS = [
     'authentication',
     'events',
+    'administration',
 ]
 
 THIRD_APPS = [
