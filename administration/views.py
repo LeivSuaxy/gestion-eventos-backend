@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from common.strategy.authpermission import IsAdmin
-from administration.api.service import AdminEventService
+from common.services.service import EventService
 
 # Create your views here.
 # These endpoints are for administration purposes only
@@ -10,15 +10,17 @@ class AdminEventView(APIView):
 
     @staticmethod
     def get(request):
-        return AdminEventService.get()
+        return EventService.get()
 
     @staticmethod
     def post(request):
-        return AdminEventService.post(request.data)
+        return EventService.post(request.data)
 
-    def put(self, request):
-        pass
+    @staticmethod
+    def put(request):
+        return EventService.put(request.data)
 
-    def delete(self, request):
-        pass
+    @staticmethod
+    def delete(request):
+        return EventService.delete(request.data)
 
