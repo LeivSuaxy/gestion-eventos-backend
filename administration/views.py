@@ -1,12 +1,14 @@
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from common.strategy.authpermission import IsAdmin
+from common.strategy.authpermission import IsAdmin, IsOrganizer, IsParticipant
 from common.services.service import EventService
 
 # Create your views here.
 # These endpoints are for administration purposes only
 
 class AdminEventView(APIView):
-    permission_classes = [IsAdmin]
+    # permission_classes = [IsAdmin, IsOrganizer, IsParticipant]
 
     @staticmethod
     def get(request):

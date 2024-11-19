@@ -28,3 +28,16 @@ class OrganizerEventView(APIView):
 @permission_classes([IsAdmin, IsParticipant])
 def register_at_event(request):
     pass
+
+@api_view(['GET'])
+def process_events(request):
+    from core.files import FileGeneration
+    from rest_framework.response import Response
+    from django.forms.models import model_to_dict
+
+    file_generation = FileGeneration()
+
+    file_generation.generate_files()
+    json_cache = file_generation.get_cache()
+
+    return Response(json_cache, status=200)
