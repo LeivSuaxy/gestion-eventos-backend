@@ -33,11 +33,17 @@ def register_at_event(request):
 def process_events(request):
     from core.files import FileGeneration
     from rest_framework.response import Response
-    from django.forms.models import model_to_dict
+    from events.api.service import process_events
+    from rest_framework import status
 
     file_generation = FileGeneration()
 
-    file_generation.generate_event_pdf()
+    file_id = file_generation.generate_event_pdf()
     json_cache = file_generation.get_cache()
 
-    return Response({'events': json_cache}, status=200)
+    response_process = process_events(file_id)
+
+    if response_process.status_code != 200:
+        return response_process
+
+    return Response({'message': response_process.data, 'data': json_cache}, status=status.HTTP_200_OK)

@@ -12,6 +12,18 @@ class Event (models.Model):
     def __str__(self):
         return f'{self.title} with price {self.price}'
 
+class ProcessedEvent (models.Model):
+    id = models.AutoField(primary_key=True)
+    old_id = models.BigIntegerField()
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    date = models.DateTimeField()
+    price = models.FloatField()
+    location = models.CharField(max_length=255)
+    participant_quantity = models.IntegerField()
+    processed_at = models.DateTimeField(auto_now_add=True)
+    report_id = models.CharField(max_length=255)
+
 class EventParticipant (models.Model):
     id = models.AutoField(primary_key=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
