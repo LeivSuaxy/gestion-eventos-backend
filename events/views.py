@@ -37,7 +37,7 @@ def process_events(request):
 
     file_generation = FileGeneration()
 
-    file_generation.generate_files()
+    file_generation.generate_event_pdf()
     json_cache = file_generation.get_cache()
 
-    return Response(json_cache, status=200)
+    return Response({'events': json_cache}, status=200)
