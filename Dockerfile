@@ -9,10 +9,10 @@ COPY requirements.txt requirements.txt
 COPY . .
 
 # Instala las dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Expone el puerto en el que correrá la aplicación (ajusta según sea necesario)
 EXPOSE 8000
 
 # Comando para correr la aplicación (ajusta según sea necesario)
-CMD ["python", "app.py"]
+CMD ["python", "manage.py", "runserver", "localhost:8000"]
