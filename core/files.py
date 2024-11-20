@@ -62,6 +62,8 @@ class FileGeneration:
 
         y_position = height - 40
 
+        self.__jump_page__(c, y_position, height)
+
         c.setFont("Helvetica-Bold", 24)
         text = 'Events Report'
         text_width = c.stringWidth(text, "Helvetica-Bold", 16)
@@ -69,35 +71,60 @@ class FileGeneration:
 
         y_position -= 40
 
+        self.__jump_page__(c, y_position, height)
+
         c.setFont("Helvetica", 16)
+
+        c.drawString(40, y_position, f'Generated at: {date}')
+
+        y_position -= 40
+
+        self.__jump_page__(c, y_position, height)
+
+        c.drawString(40, y_position, f'Report ID: {uuid}')
+
+        y_position -= 60
+
+        self.__jump_page__(c, y_position, height)
 
         for index, event in enumerate(self.__cache__):
             temporal_money = event['price'] * event['participant_quantity']
             c.drawString(40, y_position, f'{index+1} - {event["title"]}')
             y_position -= 20
+            self.__jump_page__(c, y_position, height)
             c.drawString(40, y_position, f'Date: {event["date"]}')
             y_position -= 20
+            self.__jump_page__(c, y_position, height)
 
             for participant in event['participants']:
                 c.drawString(60, y_position, f'• {participant['first_name']} {participant['last_name']} Phone: +53 {participant['phone']}')
                 y_position -= 20
+                self.__jump_page__(c, y_position, height)
 
             total_money += event['price'] * event['participant_quantity']
 
             y_position -= 20
 
-            c.drawString(40, y_position, f'Recaudad: {temporal_money}$')
+            self.__jump_page__(c, y_position, height)
+
+            c.drawString(40, y_position, f'Recaudado: {temporal_money}$')
 
             y_position -= 60
 
-            if y_position < 40:
-                c.showPage()
-                y_position = height - 40
+            self.__jump_page__(c, y_position, height)
 
         c.drawString(40, y_position, f'Total Recaudado en todos los eventos: {total_money}$')
 
         c.save()
         return uuid
+
+    @staticmethod
+    def __jump_page__(c, y, height):
+        from reportlab.pdfgen import canvas
+
+        if y < 40:
+            c.showPage()
+            y = height - 40
 
     def get_cache(self):
         return self.__cache__
