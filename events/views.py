@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from common.strategy.authpermission import IsOrganizer, IsAdmin, IsParticipant
 from common.services.service import EventService, EventProcessedService
 from events.api.service import register_at_event as register
+from events.api.service import unregister_at_event as unregister
 
 # Total CRUD for organizer manage events
 class OrganizerEventView(APIView):
@@ -40,6 +41,11 @@ class OrganizerProcessEvent(APIView):
 @permission_classes([IsAdmin, IsParticipant])
 def register_at_event(request):
     return register(request.data, request.user)
+
+@api_view(['POST'])
+@permission_classes([IsAdmin, IsParticipant])
+def unregister_at_event(request):
+    return unregister(request.data, request.user)
 
 @api_view(['GET'])
 def process_events(request):

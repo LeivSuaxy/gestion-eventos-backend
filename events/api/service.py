@@ -41,4 +41,27 @@ def register_at_event(data, user):
 
     EventParticipant.objects.create(event_id=_event.id, user_id=user.id)
 
-    return Response({'success': 'You have registered successfully'}, status=status.HTTP_200_OK)
+    return Response({'success': 'You have registered successfully'}, status=status.HTTP_201_CREATED)
+
+def unregister_at_event(data, user):
+    event = data.get('event')
+
+    if not user:
+        return Response({'error': 'Please login first'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if not event:
+        return Response({'error': 'Please provide an event id'}, status=status.HTTP_400_BAD_REQUEST)
+
+    _event = Event.objects.get(id=event)
+
+    if not _event:
+        return Response({'error': 'The event that has this id was not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    _event_participant = EventParticipant.objects.get(event_id=_event.id, user_id=user.id)
+
+    if not _event_participant:
+        return Response({'error': 'You are not registered for this event'}, status=status.HTTP_404_NOT_FOUND)
+
+    _event_participant.delete()
+
+    return Response({'success': 'You have successfully canceled your registration'}, status=status.HTTP_200_OK)
