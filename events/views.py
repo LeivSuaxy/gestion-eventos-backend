@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from common.strategy.authpermission import IsOrganizer, IsAdmin, IsParticipant
-from common.services.service import EventService
+from common.services.service import EventService, EventProcessedService
 
 # Total CRUD for organizer manage events
 class OrganizerEventView(APIView):
@@ -22,6 +22,17 @@ class OrganizerEventView(APIView):
     @staticmethod
     def delete(request):
         return EventService.delete(request.data)
+
+class OrganizerProcessEvent(APIView):
+    # permission_classes = [IsAdmin, IsOrganizer]
+
+    @staticmethod
+    def get(request):
+        return EventProcessedService.get()
+
+    @staticmethod
+    def delete(request):
+        return EventProcessedService.delete(request.data)
 
 # Endpoint for a participant to register for an event
 @api_view(['POST'])

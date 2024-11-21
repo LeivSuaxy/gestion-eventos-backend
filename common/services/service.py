@@ -1,9 +1,8 @@
-from events.models import Event
-from events.api.serializer import EventSerializer
+from events.models import Event, ProcessedEvent
+from events.api.serializer import EventSerializer, ProcessedEventSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime
-from asgiref.sync import sync_to_async
 
 # Common for administration and organizers
 class EventService:
@@ -82,3 +81,31 @@ class EventService:
         event.delete()
 
         return Response({'message': 'Event deleted'}, status=status.HTTP_200_OK)
+
+class EventProcessedService:
+    @staticmethod
+    def get():
+        events = ProcessedEvent.objects.all()
+
+        if not events:
+            return Response({'message': 'Not found events'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProcessedEventSerializer(events, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def delete(data):
+        event_id = data.get('id')
+
+        if not event_id:
+            return Response({'message': 'ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            event = ProcessedEvent.objects.get(id=event_id)
+        except ProcessedEvent.DoesNotExist:
+            return Response({'message': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        event.delete()
+
+        return Response({'message': 'Event deleted'}, status=status.HTTP_200_OK)
+
