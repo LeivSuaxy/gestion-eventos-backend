@@ -2,6 +2,7 @@ from events.models import Event, EventParticipant, ProcessedEvent
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework import status
+from common.validators.params_validator import params_validator
 
 def process_events(file_id: str):
     events = Event.objects.filter(date__lt=datetime.now())
@@ -26,13 +27,15 @@ def process_events(file_id: str):
     return Response({'message': 'Events processed'}, status=status.HTTP_200_OK)
 
 def register_at_event(data, user):
+    validated, info = params_validator(data, ['event'])
+
+    if not validated:
+        return Response({'error': info}, status=status.HTTP_400_BAD_REQUEST)
+
     event = data.get('event')
 
     if not user:
         return Response({'error': 'Please login first'}, status=status.HTTP_400_BAD_REQUEST)
-
-    if not event:
-        return Response({'error': 'Please provide an event id'}, status=status.HTTP_400_BAD_REQUEST)
 
     _event = Event.objects.get(id=event)
 

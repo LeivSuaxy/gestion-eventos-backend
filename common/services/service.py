@@ -3,6 +3,7 @@ from events.api.serializer import EventSerializer, ProcessedEventSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime
+from common.validators.params_validator import params_validator
 
 # Common for administration and organizers
 class EventService:
@@ -18,15 +19,17 @@ class EventService:
 
     @staticmethod
     def post(data):
+        validated, info = params_validator(data, ['title', 'description', 'price', 'location'])
+
+        if not validated:
+            return Response({'error': info}, status=status.HTTP_400_BAD_REQUEST)
+
         title = data.get('title')
         description = data.get('description')
         # date = data.get('date')
         date = datetime.now()
         price = data.get('price')
         location = data.get('location')
-
-        if not title or not description or not date or not price or not location:
-            return Response({'message': 'Missing required fields'}, status=status.HTTP_400_BAD_REQUEST)
 
         event = Event.objects.create(title=title, description=description, date=date, price=price, location=location)
         event.save()
@@ -35,10 +38,12 @@ class EventService:
 
     @staticmethod
     def put(data):
-        event_id = data.get('id')
+        validate, info = params_validator(data, ['id'])
 
-        if not event_id:
-            return Response({'message': 'ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if not validate:
+            return Response({'erro': info}, status=status.HTTP_400_BAD_REQUEST)
+
+        event_id = data.get('id')
 
         try:
             event = Event.objects.get(id=event_id)
