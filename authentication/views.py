@@ -3,10 +3,14 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status, generics
+from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from authentication.models import User
 from rest_framework.permissions import AllowAny
-from authentication.api.serializer import UserSerializer, UserTokenSerializer
+from authentication.api.serializer import UserSerializer, UserTokenSerializer, CustomTokenObtainPairSerializer
 from datetime import datetime
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -62,3 +66,12 @@ class RegisterUser(generics.CreateAPIView):
                 'email': user.email
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+class ProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({'message': 'you are auth'}, 200)

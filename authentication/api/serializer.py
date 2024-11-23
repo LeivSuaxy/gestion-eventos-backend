@@ -1,5 +1,9 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.tokens import Token
+
 from authentication.models import User
+from rest_framework_simplejwt.serializers import TokenObtainSerializer, AuthUser
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,3 +26,19 @@ class UserTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ( 'username', 'email', 'rol')
+
+class CustomTokenObtainPairSerializer(TokenObtainSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        return data
+
+    @classmethod
+    def get_user(cls, validated_data):
+        username = validated_data.get('username')
+        user = User.objects.get(username=username)
+        return user
