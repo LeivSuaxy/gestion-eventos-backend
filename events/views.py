@@ -1,9 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from common.strategy.authpermission import IsOrganizer, IsAdmin, IsParticipant
+from common.strategy.authpermission import IsAdmin, IsParticipant
 from common.services.service import EventService, EventProcessedService
-from events.api.service import register_at_event as register
-from events.api.service import unregister_at_event as unregister
+from events.services.service import register_at_event as register
+from events.services.service import unregister_at_event as unregister
 
 # Total CRUD for organizer manage events
 class OrganizerEventView(APIView):
@@ -51,7 +51,7 @@ def unregister_at_event(request):
 def process_events(request):
     from core.files import FileGeneration
     from rest_framework.response import Response
-    from events.api.service import process_events
+    from events.services.service import process_events
     from rest_framework import status
 
     file_generation = FileGeneration()
