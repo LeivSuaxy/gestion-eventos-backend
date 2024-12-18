@@ -1,15 +1,17 @@
 # Usa una imagen base de Python 3.12
-FROM python:3.12-slim
+FROM python:3.12.8-alpine3.21
 
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /app
+
+RUN mkdir -p /root/.cache/pip
 
 # Copia el archivo de requerimientos y el código fuente al contenedor
 COPY requirements.txt requirements.txt
 COPY . .
 
 # Instala las dependencias
-RUN pip install -r requirements.txt
+RUN pip install --cache-dir /root/.cache/pip -r requirements.txt
 
 # Expone el puerto en el que correrá la aplicación (ajusta según sea necesario)
 EXPOSE 8000
