@@ -3,12 +3,12 @@ from authentication.enum.roles import Role
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
-        return request.user and request.user == Role.ADMIN
+        return request.user.is_authenticated and request.user.role == Role.ADMIN.value
 
 class IsOrganizer(BasePermission):
     def has_permission(self, request, view):
-        return request.user and request.user == Role.ORGANIZER
+        return request.user.is_authenticated and request.user.role == Role.ORGANIZER.value
 
 class IsUser(BasePermission):
     def has_permission(self, request, view):
-        return request.user and request.user == Role.USER
+        return request.user.is_authenticated and request.user.role == Role.USER.value

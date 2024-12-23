@@ -23,7 +23,7 @@ DATABASES = {
     }
 }
 
-# Cache
+# Cache - CASE REDIS
 # sudo systemctl start redis-server
 # sudo systemctl enable redis-server
 CACHES = {
@@ -35,6 +35,14 @@ CACHES = {
         }
     }
 }
+
+# In Case you don't have REDIS
+'''CACHES = {
+    'default': {
+         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+     }
+}'''
+
 
 # Email
 
