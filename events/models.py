@@ -13,3 +13,13 @@ class Event(BaseModel):
 
     def __str__(self):
         return self.title
+
+class EventParticipant(BaseModel):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='participants')
+    participant = models.ForeignKey(EventUser, on_delete=models.CASCADE, related_name='participations')
+
+    class Meta:
+        unique_together = ('event', 'participant')
+
+    def __str__(self):
+        return f'{self.event.title} - {self.participant.username}'

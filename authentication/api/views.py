@@ -23,6 +23,8 @@ class RegisterView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save(is_active=False)
         code = generate_code()
+        # This is while server is in dev mode
+        print(code)
         send_verification_email(user, code)
         return Response({'detail': 'Verification email sent.'}, status=status.HTTP_200_OK)
 
