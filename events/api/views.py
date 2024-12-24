@@ -14,5 +14,8 @@ class EventOrganizerAPIVIEW(APIView):
 
     def get(self, request):
         events = self.service.get_all()
+        if not events:
+            return Response({'message': "There are not events in database"} ,status=status.HTTP_404_NOT_FOUND)
+
         serializer = EventSerializerOrganizer(events, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

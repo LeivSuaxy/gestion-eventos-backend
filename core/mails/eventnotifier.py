@@ -1,0 +1,1 @@
+# Script to send notification emails to users when an event is near to start
