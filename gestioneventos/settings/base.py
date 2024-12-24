@@ -33,6 +33,7 @@ LOCAL_APPS = [
     'authentication',
     'events',
     'administration',
+    'public',
 ]
 
 THIRD_APPS = [
