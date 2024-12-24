@@ -7,7 +7,7 @@ class Event(BaseModel):
     title = models.CharField(max_length=255)
     description = models.TextField()
     date = models.DateField()
-    image = models.ImageField(upload_to='static/images/events/')
+    image = models.ImageField(upload_to='media/images/events/', null=True, blank=True)
     is_published = models.BooleanField(default=False)
     organizer = models.ForeignKey(EventUser, on_delete=models.CASCADE, related_name='events')
 
