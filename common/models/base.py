@@ -9,4 +9,8 @@ class BaseModel(models.Model):
     active = models.BooleanField(default=True)
 
     class Meta:
+        indexes = [
+            models.Index(fields=['active']),
+            models.Index(fields=['deleted_at']),
+        ]
         abstract = True
