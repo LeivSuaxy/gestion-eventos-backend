@@ -14,6 +14,8 @@ pip install -r requirements.txt
 
 Core and common are not Django apps, they are just Python packages to complement the system.
 
+Public app exists to serve frontend software.
+
 Templates: HTML and CSS files to render emails or other needs.
 
 # App Structure
