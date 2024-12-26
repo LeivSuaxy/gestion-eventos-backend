@@ -1,32 +1,5 @@
-import pytest
-from rest_framework.test import APIClient
 from django.urls import reverse
-
-from authentication.models import EventUser
-
-
-@pytest.fixture
-def api_client():
-    return APIClient()
-
-@pytest.fixture
-def user_data():
-    return {
-        'username': 'testuser',
-        'email': 'testuser@example.com',
-        'password': 'testpass123'
-    }
-
-@pytest.fixture
-def create_user(db, user_data):
-    user = EventUser.objects.create_user(
-        username=user_data['username'],
-        email=user_data['email'],
-        password=user_data['password']
-    )
-    user.is_active=True
-    user.save()
-    return user
+from common.tests.fixture import *
 
 # authentication/tests/test_authentication.py
 @pytest.mark.django_db
