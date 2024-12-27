@@ -3,10 +3,13 @@ from django.urls import reverse
 from common.tests.fixture import *
 from events.models import Event
 from authentication.models import EventUser
+from django.core.cache import cache
 
 @pytest.mark.django_db
 @pytest.mark.order(0)
 def test_get_empty_events(api_client, create_organizer_token):
+    cache.clear()
+    Event.objects.all().delete()
     api_client.credentials(HTTP_AUTHORIZATION='Bearer ' + create_organizer_token)
     url = reverse('organizer_events')
     response = api_client.get(url)
@@ -48,9 +51,6 @@ def create_organizer_token(db, api_client,  create_organizer):
 @pytest.mark.django_db
 @pytest.mark.order(1)
 def test_get_events(api_client, create_organizer_token, create_organizer):
-    api_client.credentials(HTTP_AUTHORIZATION='Bearer ' + create_organizer_token)
-    url = reverse('organizer_events')
-
     event = Event.objects.create(
         title='Test Event',
         description='Test Description',
@@ -59,6 +59,9 @@ def test_get_events(api_client, create_organizer_token, create_organizer):
     )
 
     event.save()
+
+    api_client.credentials(HTTP_AUTHORIZATION='Bearer ' + create_organizer_token)
+    url = reverse('organizer_events')
 
     response = api_client.get(url)
 
