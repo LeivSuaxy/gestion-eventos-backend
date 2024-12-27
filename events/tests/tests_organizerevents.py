@@ -1,5 +1,3 @@
-import pytest
-from django.urls import reverse
 from common.tests.fixture import *
 from events.models import Event
 from authentication.models import EventUser
