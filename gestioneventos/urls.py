@@ -22,6 +22,7 @@ urlpatterns = [
     path('administration/', admin.site.urls),
     path('auth/', include('authentication.urls')),
     path('events/', include('events.urls')),
+    path('admin/', include('administration.urls')),
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
