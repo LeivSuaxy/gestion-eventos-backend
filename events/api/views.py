@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 
 from common.strategy.authpermission import IsOrganizer
 from events.api.serializer import EventSerializerOrganizer
@@ -62,3 +63,33 @@ class EventOrganizerAPIVIEW(APIView):
 
         event.delete()
         return Response({'message': 'Event deleted'}, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+@permission_classes([IsOrganizer])
+def close_event(request):
+    from core.reports.generator import generate_close_event_report
+    import concurrent.futures as futures
+    from events.models import Event
+
+    if not request.data['id']:
+        return Response({'message': 'Event id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        event = Event.objects.get(title=request.data['id'])
+        if not event.active or event.deleted_at is not None:
+            return Response({'message': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Event.DoesNotExist:
+        return Response({'message': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if event is None or event.organizer != request.user:
+        return Response({'message': 'Event not found or you do not have permission to close this event'},
+                        status=status.HTTP_404_NOT_FOUND)
+
+
+    generate_close_event_report(event)
+
+    event.delete()
+    event.save()
+    return Response({'message': 'Event closed and report generated'}, status=status.HTTP_200_OK)
+
+

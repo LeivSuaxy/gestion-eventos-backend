@@ -2,18 +2,12 @@ from django.db import models
 from uuid import uuid4
 from django.utils import timezone
 
-class ActiveManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(deleted_at__isnull=True, active=True)
-
 class BaseModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(default=None, null=True)
     active = models.BooleanField(default=True)
-
-    objects = ActiveManager()
 
     class Meta:
         indexes = [
