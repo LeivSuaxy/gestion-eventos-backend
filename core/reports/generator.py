@@ -1,6 +1,8 @@
 import os
 import logging
 from reportlab.platypus.flowables import Spacer, Image
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 from events.models import Event, EventParticipant
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -45,7 +47,7 @@ def generate_close_event_report(event: Event):
         plt.xlabel('Date')
         plt.ylabel('Number of Registrations')
         plt.tight_layout()
-        plot_path = '/tmp/registrations_by_day.png'
+        plot_path = os.path.join(settings.REPORTS_DIR, 'registrations_by_day.png')
         plt.savefig(plot_path)
         plt.close()
 
@@ -53,6 +55,12 @@ def generate_close_event_report(event: Event):
         pdf_path = os.path.join(settings.REPORTS_DIR, f'event_{event.id}_report.pdf')
         doc = SimpleDocTemplate(pdf_path, pagesize=letter)
         elements = []
+
+        # Add event name as header
+        styles = getSampleStyleSheet()
+        header = Paragraph(f'Event: {event.title}', styles['Title'])
+        elements.append(header)
+        elements.append(Spacer(1, 12))
 
         # Add table of participants
         table_data = [['Name', 'Registered At']] + [[p['name'], p['registered_at']] for p in participant_data]
@@ -71,6 +79,11 @@ def generate_close_event_report(event: Event):
         # Add plot image
         elements.append(Spacer(1, 12))
         elements.append(Image(plot_path, width=500, height=300))
+
+        # Add organizer name as footer
+        elements.append(Spacer(1, 12))
+        footer = Paragraph(f'Organizer: {event.organizer.username}', styles['Normal'])
+        elements.append(footer)
 
         doc.build(elements)
 
