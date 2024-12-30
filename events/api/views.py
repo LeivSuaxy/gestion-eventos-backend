@@ -85,7 +85,7 @@ def close_event(request):
         return Response({'message': 'Event not found or you do not have permission to close this event'},
                         status=status.HTTP_404_NOT_FOUND)
 
-
+    # Generate event report.
     generate_close_event_report(event)
 
     event.delete()

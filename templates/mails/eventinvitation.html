@@ -22,16 +22,5 @@
         <p>&copy; 2023 Your Company. All rights reserved.</p>
     </div>
 </div>
-<script>
-    function copyToClipboard() {
-        var codeElement = document.getElementById('verification-code');
-        var code = codeElement.innerText;
-        navigator.clipboard.writeText(code).then(function() {
-            alert('Verification code copied to clipboard!');
-        }, function(err) {
-            alert('Could not copy text:');
-        });
-    }
-</script>
 </body>
 </html>
