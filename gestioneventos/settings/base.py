@@ -31,13 +31,26 @@ BASE_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_yasg',
+    'channels',
 ]
+
+ASGI_APPLICATION = 'gestioneventos.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 LOCAL_APPS = [
     'authentication',
     'events',
     'administration',
     'public',
+    'streaming',
 ]
 
 THIRD_APPS = [
