@@ -11,6 +11,7 @@ pip install -r requirements.txt
   - authentication
   - events
   - public
+  - streaming
 
 Core and common are not Django apps, they are just Python packages to complement the system.
 
