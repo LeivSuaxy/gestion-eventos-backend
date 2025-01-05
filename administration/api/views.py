@@ -1,7 +1,6 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
-from common.strategy.authpermission import IsAdmin
+from core.guards.permission_classes import IsAdmin
 from events.services.eventservice import EventService
 from rest_framework.response import Response
 from administration.api.serializer import EventSerializerAdmin
