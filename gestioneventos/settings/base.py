@@ -21,6 +21,18 @@ DEBUG = False
 ALLOWED_HOSTS = ['localhost', '0.0.0.0']
 
 
+ASGI_APPLICATION = 'gestioneventos.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+
 # Application definition
 
 BASE_APPS = [
@@ -33,17 +45,6 @@ BASE_APPS = [
     'drf_yasg',
     'channels',
 ]
-
-ASGI_APPLICATION = 'gestioneventos.asgi.application'
-
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)],
-        },
-    },
-}
 
 LOCAL_APPS = [
     'authentication',

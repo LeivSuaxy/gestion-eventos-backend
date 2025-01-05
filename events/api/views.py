@@ -1,15 +1,14 @@
+from django.core.cache import cache
 from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes
 
-from common.strategy.authpermission import IsOrganizer
+from core.guards.permission_classes import IsOrganizer
+from common.utils.cache_utils import delete_cache
 from events.api.serializer import EventSerializerOrganizer
 from events.services.eventservice import EventService
-
-from rest_framework.parsers import MultiPartParser, FormParser
-from django.core.cache import cache
-from common.utils.cache_utils import delete_cache
 
 # Create your views here.
 class EventOrganizerAPIVIEW(APIView):
@@ -68,7 +67,6 @@ class EventOrganizerAPIVIEW(APIView):
 @permission_classes([IsOrganizer])
 def close_event(request):
     from core.reports.generator import generate_close_event_report
-    import concurrent.futures as futures
     from events.models import Event
 
     if not request.data['id']:
