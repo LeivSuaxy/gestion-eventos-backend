@@ -8,7 +8,7 @@ from authentication.services.mails import send_verification_email
 from django.core.cache import cache
 from common.utils.codegen import generate_code
 from rest_framework.decorators import api_view, permission_classes
-from common.strategy.authpermission import IsUser, IsAdmin, IsOrganizer
+# from common.strategy.authpermission import IsUser, IsAdmin, IsOrganizer
 
 # Create your views here.
 User: EventUser = get_user_model()

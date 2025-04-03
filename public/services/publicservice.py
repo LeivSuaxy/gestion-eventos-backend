@@ -1,8 +1,10 @@
+from common.patterns.decorators.singleton import singleton
 from common.services.base import BaseService
 from events.models import Event
 from rest_framework.pagination import PageNumberPagination
 from django.conf import settings
 
+@singleton
 class PublicEventService(BaseService):
     model = Event
 

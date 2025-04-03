@@ -30,3 +30,26 @@ Templates: HTML and CSS files to render emails or other needs.
 - services : Contains the services for the app module.
 - tests : Contains the tests for the app module.
 
+# ENVS!
+## Redis
+- REDIS_HOST : Redis host.
+- REDIS_PORT : Redis port.
+- USE_REDIS : Boolean(String 'True' or 'False') to indicate if Redis is used or not.
+
+## Rest Framework
+- PAGE_SIZE : Default page size for pagination.
+
+## Emails
+- EMAIL_HOST : Email host.
+- EMAIL_PORT : Email port.
+- EMAIL_USE_TLS : Boolean(String 'True' or 'False') to indicate if TLS is used or not.
+- EMAIL_HOST_USER : Email host user.
+- EMAIL_HOST_PASSWORD : Email host password.
+- DEFAULT_FROM_EMAIL : Default from email address.
+
+## Database
+- DATABASE_NAME : Database name.
+- DATABASE_USER : Database user.
+- DATABASE_PASSWORD : Database password.
+- DATABASE_HOST : Database host.
+- DATABASE_PORT : Database port.
