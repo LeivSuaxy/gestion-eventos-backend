@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from core.guards.permission_classes import IsOrganizer
 from common.utils.cache_utils import delete_cache
 from events.api.serializer import EventSerializerOrganizer
-from events.services.eventservice import EventService
+from events.services.event_service import EventService
 
 # Create your views here.
 class EventOrganizerAPIVIEW(APIView):

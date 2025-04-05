@@ -8,3 +8,4 @@ class EventUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False, unique=True)
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=[(role.value, role.name) for role in Role], default=Role.USER.value)
+    image = models.ImageField(upload_to='images/users/', null=True, blank=True)

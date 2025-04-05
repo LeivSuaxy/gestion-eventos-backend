@@ -1,4 +1,6 @@
 from django.db import models
+
+from categories.models import Category, SubCategory
 from common.models.base import BaseModel
 from authentication.models import EventUser
 
@@ -12,6 +14,8 @@ class Event(BaseModel):
     require_acceptance = models.BooleanField(default=False)
     limit_participants = models.PositiveIntegerField(default=30, null=True, blank=True)
     organizer = models.ForeignKey(EventUser, on_delete=models.CASCADE, related_name='events')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='events')
+    sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE, related_name='events')
 
     class Meta(BaseModel.Meta):
         indexes = BaseModel.Meta.indexes + [

@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from core.guards.permission_classes import IsAdmin
-from events.services.eventservice import EventService
+from events.services.event_service import EventService
 from rest_framework.response import Response
 from administration.api.serializer import EventSerializerAdmin
 from rest_framework import status
