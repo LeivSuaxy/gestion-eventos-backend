@@ -12,4 +12,5 @@ public class EventPublicCreateDTO
     public DateTime Date { get; set; }
     public bool RequireAcceptance { get; set; } = false;
     public int LimitParticipants { get; set; } = 30;
+    public bool IsPublished { get; set; }
 }

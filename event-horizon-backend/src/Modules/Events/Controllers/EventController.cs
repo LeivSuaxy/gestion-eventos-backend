@@ -1,3 +1,4 @@
+using AutoMapper;
 using event_horizon_backend.Core.Context;
 using event_horizon_backend.Modules.Events.DTO.PublicDTO;
 using event_horizon_backend.Modules.Events.Models;
@@ -11,10 +12,12 @@ namespace event_horizon_backend.Modules.Events.Controllers;
 public class EventController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public EventController(AppDbContext context)
+    public EventController(AppDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
     
     [HttpGet]
@@ -40,15 +43,7 @@ public class EventController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<EventModel>> CreateEvent(EventPublicCreateDTO eventPublicCreate)
     {
-        EventModel eventModel = new EventModel
-        {
-            Id = Guid.NewGuid(),
-            Title = eventPublicCreate.Title,
-            Description = eventPublicCreate.Description,
-            Date = eventPublicCreate.Date,
-            RequireAcceptance = eventPublicCreate.RequireAcceptance,
-            LimitParticipants = eventPublicCreate.LimitParticipants,
-        };
+        EventModel eventModel = _mapper.Map<EventModel>(eventPublicCreate);
         
         _context.Events.Add(eventModel);
         await _context.SaveChangesAsync();
