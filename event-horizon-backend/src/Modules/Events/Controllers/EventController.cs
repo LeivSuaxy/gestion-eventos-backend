@@ -27,7 +27,7 @@ public class EventController : ControllerBase
     }
     
     [HttpGet("{id}")]
-    public async Task<ActionResult<EventModel>> GetEvent(int id)
+    public async Task<ActionResult<EventModel>> GetEvent(Guid id)
     {
         var eventModel = await _context.Events.FindAsync(id);
 

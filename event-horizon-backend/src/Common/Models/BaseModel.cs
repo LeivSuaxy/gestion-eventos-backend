@@ -10,13 +10,13 @@ public class BaseModel
     [Column(TypeName = "uuid")]
     public Guid Id { get; set; } 
     
-    [Column(TypeName = "timestamp")]
+    [Column(TypeName = "time zone")]
     public DateTime CreatedAt { get; set; }
     
-    [Column(TypeName = "timestamp")]
+    [Column(TypeName = "time zone")]
     public DateTime UpdatedAt { get; set; }
     
-    [Column(TypeName = "timestamp")]
+    [Column(TypeName = "time zone")]
     public DateTime? DeletedAt { get; set; }
     
     public bool Active { get; set; }
