@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="src\Modules\Authentication\Controllers\" />
       <Folder Include="src\Modules\Events\DTO\AdminDTO\" />
       <Folder Include="src\Modules\Events\Services\" />
       <Folder Include="src\Modules\Events\Tests\" />
