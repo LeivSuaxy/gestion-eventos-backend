@@ -7,32 +7,32 @@ namespace event_horizon_backend.Modules.Users.Models;
 
 public class User : IdentityUser<Guid>
 {
-    [Column(TypeName = "time zone")]
+    [Column(TypeName = "date")]
     public DateTime CreatedAt { get; set; }
     
-    [Column(TypeName = "time zone")]
+    [Column(TypeName = "date")]
     public DateTime UpdatedAt { get; set; }
     
-    [Column(TypeName = "time zone")]
+    [Column(TypeName = "date")]
     public DateTime? DeletedAt { get; set; }
     
     public bool Active { get; set; }
 
-    protected User()
+    public User()
     {
-        CreatedAt = DateTime.UtcNow;
-        UpdatedAt = DateTime.UtcNow;
+        CreatedAt = DateTime.UtcNow.Date;
+        UpdatedAt = DateTime.UtcNow.Date;
         Active = true;
     }
 
     public virtual void SoftDelete()
     {
-        DeletedAt = DateTime.UtcNow;
+        DeletedAt = DateTime.UtcNow.Date;
         Active = false;
     }
 
     public virtual void Update()
     {
-        UpdatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow.Date;
     }
 }

@@ -18,7 +18,7 @@ public class EventModel : BaseModel
     public string? ImageUrl { get; set; }
     
     [Required]
-    [Column(TypeName = "time zone")]
+    [Column(TypeName = "date")]
     public required DateTime Date { get; set; }
     
     [Column(TypeName = "boolean")]

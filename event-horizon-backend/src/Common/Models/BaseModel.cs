@@ -10,13 +10,13 @@ public class BaseModel
     [Column(TypeName = "uuid")]
     public Guid Id { get; set; } 
     
-    [Column(TypeName = "time zone")]
+    [Column(TypeName = "date")]
     public DateTime CreatedAt { get; set; }
     
-    [Column(TypeName = "time zone")]
+    [Column(TypeName = "date")]
     public DateTime UpdatedAt { get; set; }
     
-    [Column(TypeName = "time zone")]
+    [Column(TypeName = "date")]
     public DateTime? DeletedAt { get; set; }
     
     public bool Active { get; set; }
@@ -24,19 +24,19 @@ public class BaseModel
     protected BaseModel()
     {
         Id = Guid.NewGuid();
-        CreatedAt = DateTime.UtcNow;
-        UpdatedAt = DateTime.UtcNow;
+        CreatedAt = DateTime.UtcNow.Date;
+        UpdatedAt = DateTime.UtcNow.Date;
         Active = true;
     }
 
     public virtual void SoftDelete()
     {
-        DeletedAt = DateTime.UtcNow;
+        DeletedAt = DateTime.UtcNow.Date;
         Active = false;
     }
 
     public virtual void Update()
     {
-        UpdatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow.Date;
     }
 }

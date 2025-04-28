@@ -71,6 +71,8 @@ public class EventHorizonBuilder
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+
+        _builder.Services.AddScoped<TokenService>();
     }
 
     private void AddMappers()

@@ -1,11 +1,14 @@
 using System.Linq.Expressions;
 using event_horizon_backend.Common.Models;
 using event_horizon_backend.Modules.Events.Models;
+using event_horizon_backend.Modules.Users.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace event_horizon_backend.Core.Context;
 
-public class AppDbContext : DbContext
+public class AppDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -13,7 +16,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<EventModel> Events { get; set; } = null!;
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
