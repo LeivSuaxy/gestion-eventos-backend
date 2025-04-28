@@ -1,6 +1,6 @@
 using event_horizon_backend;
 
-WebApplicationBuilder builder = new EventHorizonBuilder().Create(WebApplication.CreateBuilder());
+WebApplicationBuilder builder = EventHorizonBuilder.Create(WebApplication.CreateBuilder());
 
 WebApplication app = builder.Build();
 

@@ -6,40 +6,44 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Identity;
+
 namespace event_horizon_backend;
 
 public class EventHorizonBuilder
 {
     private static WebApplicationBuilder _builder;
-    
-    public EventHorizonBuilder()
-    {
-        
-    }
 
-    public WebApplicationBuilder Create(WebApplicationBuilder builder)
+    public EventHorizonBuilder(WebApplicationBuilder builder)
     {
         _builder = builder;
-        AddControllers();
-        AddContext();
-        AddAuth();
-        AddMappers();
-        AddOpenApi();
-        return _builder;
     }
 
-    private void AddControllers()
+    public static WebApplicationBuilder Create(WebApplicationBuilder builder)
+    {
+        return new EventHorizonBuilder(builder)
+            .AddControllers()
+            .AddContext()
+            .AddAuth()
+            .AddMappers()
+            .AddOpenApi()
+            .GetBuilder();
+    }
+
+    private EventHorizonBuilder AddControllers()
     {
         _builder.Services.AddControllers();
+        return this;
     }
 
-    private void AddContext()
+    private EventHorizonBuilder AddContext()
     {
         _builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(_builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        return this;
     }
 
-    private void AddAuth()
+    private EventHorizonBuilder AddAuth()
     {
         _builder.Services.AddAuthentication(options =>
         {
@@ -59,10 +63,12 @@ public class EventHorizonBuilder
                 ClockSkew = TimeSpan.Zero,
                 ValidIssuer = _builder.Configuration["JWT:ValidIssuer"],
                 ValidAudience = _builder.Configuration["JWT:ValidAudience"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_builder.Configuration["JWT:Secret"] ?? throw new InvalidOperationException("Secret must be somethig")))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                    _builder.Configuration["JWT:Secret"] ??
+                    throw new InvalidOperationException("Secret must be somethig")))
             };
         });
-        
+
         _builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
             {
                 options.Password.RequiredLength = 8;
@@ -73,16 +79,24 @@ public class EventHorizonBuilder
             .AddDefaultTokenProviders();
 
         _builder.Services.AddScoped<TokenService>();
+
+        return this;
     }
 
-    private void AddMappers()
+    private EventHorizonBuilder AddMappers()
     {
         _builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
+        return this;
     }
 
-    private void AddOpenApi()
+    private EventHorizonBuilder AddOpenApi()
     {
         _builder.Services.AddEndpointsApiExplorer();
         _builder.Services.AddSwaggerGen();
+
+        return this;
     }
+
+    public WebApplicationBuilder GetBuilder() => _builder;
 }
