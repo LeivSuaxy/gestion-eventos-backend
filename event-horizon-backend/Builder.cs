@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using event_horizon_backend.Core.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +10,7 @@ namespace event_horizon_backend;
 
 public class EventHorizonBuilder
 {
-    private static WebApplicationBuilder _builder;
+    private readonly WebApplicationBuilder _builder;
 
     private EventHorizonBuilder(WebApplicationBuilder builder)
     {
@@ -65,7 +64,7 @@ public class EventHorizonBuilder
                 ValidAudience = _builder.Configuration["JWT:ValidAudience"],
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                     _builder.Configuration["JWT:Secret"] ??
-                    throw new InvalidOperationException("Secret must be somethig")))
+                    throw new InvalidOperationException("Secret must be not empty")))
             };
         });
 
