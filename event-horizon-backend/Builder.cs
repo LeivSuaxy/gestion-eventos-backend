@@ -13,7 +13,7 @@ public class EventHorizonBuilder
 {
     private static WebApplicationBuilder _builder;
 
-    public EventHorizonBuilder(WebApplicationBuilder builder)
+    private EventHorizonBuilder(WebApplicationBuilder builder)
     {
         _builder = builder;
     }
