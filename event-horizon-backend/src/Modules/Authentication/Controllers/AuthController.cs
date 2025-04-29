@@ -59,14 +59,10 @@ public class AuthController : ControllerBase
             UpdatedAt = DateTime.UtcNow,
             Active = true
         };
-
-        var result = await _userManager.CreateAsync(user, model.Password);
-        if (!result.Succeeded)
-            return BadRequest(result.Errors);
-
+        
         //await _userManager.AddToRoleAsync(user, "User");
         await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName);
-        return Ok(new { message = "User registered successfully" });
+        return Ok(new { message = "Email sent successfully" });
     }
     
     

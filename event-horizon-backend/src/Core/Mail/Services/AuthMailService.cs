@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using event_horizon_backend.Core.Utils;
 
 namespace event_horizon_backend.Core.Mail.Services;
@@ -36,14 +37,27 @@ public class AuthMailService
         return await File.ReadAllTextAsync(templatePath);
     }
     
-    private async Task SendEmailAsync(string to, string subject, string htmlBody)
+    private async Task SendEmailAsync(string to, string subject, string htmlBody, int intent = 3)
     {
-        var message = new MimeMessage();
+        if (intent <= 0)
+        {
+            throw new SocketException(11, "Enable to access to socker server smtp");
+        }
+        
+        MimeMessage message = new MimeMessage();
         message.From.Add(new MailboxAddress(_mailSettings.DisplayName, _mailSettings.From));
         message.To.Add(MailboxAddress.Parse(to));
         message.Subject = subject;
 
-        var bodyBuilder = new BodyBuilder
+        Console.WriteLine("Message Settings");
+        Console.WriteLine(_mailSettings.AppUrl);
+        Console.WriteLine(_mailSettings.DisplayName);
+        Console.WriteLine(_mailSettings.From);
+        Console.WriteLine(_mailSettings.Host);
+        Console.WriteLine(_mailSettings.Password);
+        Console.WriteLine(_mailSettings.Port);
+        
+        BodyBuilder bodyBuilder = new BodyBuilder
         {
             HtmlBody = htmlBody
         };
@@ -57,8 +71,17 @@ public class AuthMailService
             
         if (!string.IsNullOrEmpty(_mailSettings.UserName))
             await client.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password);
-            
-        await client.SendAsync(message);
+
+        try
+        {
+            await client.SendAsync(message);
+        }
+        catch (SocketException ex) when (ex.ErrorCode == 11)
+        {
+            Console.WriteLine($"Error en intento {intent}");
+            await SendEmailAsync(to, subject, htmlBody, --intent);
+        }
+        
         Console.WriteLine("Enviado?");
         await client.DisconnectAsync(true);
     }
