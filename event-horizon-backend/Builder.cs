@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using event_horizon_backend.Core.Cache.Interfaces;
+using event_horizon_backend.Core.Cache.Providers;
 using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Identity;
+using StackExchange.Redis;
 
 namespace event_horizon_backend;
 
@@ -25,6 +28,7 @@ public class EventHorizonBuilder
             .AddAuth()
             .AddMappers()
             .AddOpenApi()
+            .AddCacheService()
             .GetBuilder();
     }
 
@@ -97,5 +101,15 @@ public class EventHorizonBuilder
         return this;
     }
 
+    private EventHorizonBuilder AddCacheService()
+    {
+        _builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(_builder.Configuration.GetConnectionString("RedisConnection") ??
+                                          "localhost:6379"));
+
+        _builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+
+        return this;
+    }
     private WebApplicationBuilder GetBuilder() => _builder;
 }
