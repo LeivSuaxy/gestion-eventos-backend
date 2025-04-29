@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using event_horizon_backend.Core.Cache.Interfaces;
 using event_horizon_backend.Core.Cache.Providers;
+using event_horizon_backend.Core.Mail;
+using event_horizon_backend.Core.Mail.Services;
 using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Identity;
 using StackExchange.Redis;
@@ -25,6 +27,7 @@ public class EventHorizonBuilder
         return new EventHorizonBuilder(builder)
             .AddControllers()
             .AddContext()
+            .AddMailServices()
             .AddAuth()
             .AddMappers()
             .AddOpenApi()
@@ -101,6 +104,14 @@ public class EventHorizonBuilder
         return this;
     }
 
+    private EventHorizonBuilder AddMailServices()
+    {
+        _builder.Services.Configure<MailSettings>(_builder.Configuration.GetSection("MailSettings"));
+        _builder.Services.AddScoped<AuthMailService>();
+
+        return this;
+    }
+    
     private EventHorizonBuilder AddCacheService()
     {
         _builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>

@@ -1,3 +1,4 @@
+using event_horizon_backend.Core.Mail.Services;
 using event_horizon_backend.Modules.Authentication.DTO;
 using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Identity;
@@ -12,15 +13,18 @@ public class AuthController : ControllerBase
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly TokenService _tokenService;
+    private readonly AuthMailService _authMailService;
 
     public AuthController(
         UserManager<User> userManager,
         SignInManager<User> signInManager,
-        TokenService tokenService)
+        TokenService tokenService,
+        AuthMailService authMailService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
+        _authMailService = authMailService;
     }
 
     [HttpPost("login")]
@@ -40,7 +44,6 @@ public class AuthController : ControllerBase
         return Ok(new
         {
             token,
-            username = user.UserName,
             roles
         });
     }
@@ -48,8 +51,9 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto model)
     {
-        var user = new User { 
-            UserName = model.Username, 
+        User user = new User
+        {
+            UserName = model.Username,
             Email = model.Email,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
@@ -60,6 +64,17 @@ public class AuthController : ControllerBase
         if (!result.Succeeded)
             return BadRequest(result.Errors);
 
+        //await _userManager.AddToRoleAsync(user, "User");
+        await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName);
         return Ok(new { message = "User registered successfully" });
     }
+    
+    
+
+    [HttpPost("verify")]
+    public async Task<IActionResult> Verify()
+    {
+        return Ok(new { message = "User verified successfully" });
+    }
+
 }
