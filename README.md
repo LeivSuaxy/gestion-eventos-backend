@@ -37,3 +37,44 @@ Informaticas (La Habana).
   dotnet ef database update
 ```
 ## Para desarrolladores
+
+### Estructura del proyecto
+
+```
+  ├── Properties -> Propiedades del proyecto
+  │   └── launcheSettings.json -> Opciones de lanzamiento
+  │ 
+  ├── wwwroot -> Archivos estaticos 
+  │   └── images -> Imagenes estaticas
+  │ 
+  ├── Migrations -> Migraciones de la base de datos
+  │   └──  ...
+  │   
+  ├── src -> Codigo fuente
+  │   ├── Common -> Codigo comun del proyecto (Abstracciones)
+  │   ├── Core -> Nucleo del proyecto (Funciones generales del proyecto)
+  │   └── Modules -> Modulos del proyecto (Asignacion de responsabilidades)
+  │       ├── Authentication
+  │       ├── Category
+  │       ├── Events
+  │       └── Users
+  │
+  ├── Templates -> Plantillas HTML para complementar servicios (Mensajeria)
+  ├── Tests -> Tests integrados del proyecto
+  ├── appsettings.json -> Configuracion del proyecto
+  ├── appsettings.Development.json -> Configuracion de desarrollo del proyecto
+  ├── Builder.cs -> Clase para la construccion del proyecto (Alter Name Startup.cs)
+  └── Program.cs -> Clase principal del proyecto
+```
+
+### Modulos
+#### Estructura de un modulo
+```
+└── ModuleName
+    ├── Controllers -> Endpoints de la API
+    ├── DTO -> Estructuras que definen los datos de entrada y salida del modulo
+    ├── Mappers -> Mapeadores de objetos (Serializers)
+    ├── Models -> Modelos que trabajara el modulo
+    ├── Services -> Servicios del modulo 
+    └── Tests -> Tests unitarios del modulo
+```
