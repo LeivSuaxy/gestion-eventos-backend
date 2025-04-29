@@ -1,4 +1,6 @@
+using event_horizon_backend.Core.Cache.Interfaces;
 using event_horizon_backend.Core.Mail.Services;
+using event_horizon_backend.Core.Utils;
 using event_horizon_backend.Modules.Authentication.DTO;
 using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Identity;
@@ -14,17 +16,20 @@ public class AuthController : ControllerBase
     private readonly SignInManager<User> _signInManager;
     private readonly TokenService _tokenService;
     private readonly AuthMailService _authMailService;
-
+    private readonly ICacheService _cacheService;
+    private const string PendingRegistrationKey = "pending_registrations";
     public AuthController(
         UserManager<User> userManager,
         SignInManager<User> signInManager,
         TokenService tokenService,
-        AuthMailService authMailService)
+        AuthMailService authMailService,
+        ICacheService cacheService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _tokenService = tokenService;
         _authMailService = authMailService;
+        _cacheService = cacheService;
     }
 
     [HttpPost("login")]
@@ -38,8 +43,8 @@ public class AuthController : ControllerBase
         if (!result.Succeeded)
             return Unauthorized(new { message = "Invalid username or password" });
 
-        var roles = await _userManager.GetRolesAsync(user);
-        var token = _tokenService.GenerateToken(user, roles);
+        IList<string> roles = await _userManager.GetRolesAsync(user);
+        string token = _tokenService.GenerateToken(user, roles);
 
         return Ok(new
         {
@@ -61,7 +66,18 @@ public class AuthController : ControllerBase
         };
         
         //await _userManager.AddToRoleAsync(user, "User");
-        await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName);
+        string token = CodeGeneration.New();
+        await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName, token);
+
+        CacheRegisterDto cacheRegisterDto = new CacheRegisterDto
+        {
+            Email = user.Email,
+            Username = user.UserName,
+            Token = token
+        };
+
+        await _cacheService.SetAsync(user.Email, cacheRegisterDto, TimeSpan.FromMinutes(3));
+        
         return Ok(new { message = "Email sent successfully" });
     }
     

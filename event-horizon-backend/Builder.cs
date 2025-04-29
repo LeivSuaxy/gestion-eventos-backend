@@ -114,12 +114,23 @@ public class EventHorizonBuilder
     
     private EventHorizonBuilder AddCacheService()
     {
-        _builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-            ConnectionMultiplexer.Connect(_builder.Configuration.GetConnectionString("RedisConnection") ??
-                                          "localhost:6379"));
+        bool useRedis = _builder.Configuration.GetValue<bool>("Redis:Enabled");
 
-        _builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+        if (useRedis)
+        {
+            _builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+                ConnectionMultiplexer.Connect(_builder.Configuration.GetConnectionString("RedisConnection") ??
+                                              "localhost:6379"));
 
+            _builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+
+        }
+        else
+        {
+            _builder.Services.AddMemoryCache();
+            _builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
+        }
+        
         return this;
     }
     private WebApplicationBuilder GetBuilder() => _builder;

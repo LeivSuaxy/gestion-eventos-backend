@@ -20,10 +20,9 @@ public class AuthMailService
         _mailSettings = mailSettings.Value;
     }
 
-    public async Task SendVerificationEmailAsync(string email, string userName)
+    public async Task SendVerificationEmailAsync(string email, string userName, string token)
     {
         string template = await LoadTemplateAsync("EmailVerification.html");
-        string token = CodeGeneration.New();
         string body = template
             .Replace("{{userName}}", userName)
             .Replace("{{verificationLink}}", $"{_mailSettings.AppUrl}/verify?token={token}");
