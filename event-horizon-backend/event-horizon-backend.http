@@ -1,0 +1,6 @@
+@event_horizon_backend_HostAddress = http://localhost:5291
+
+GET {{event_horizon_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
