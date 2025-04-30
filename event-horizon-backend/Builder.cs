@@ -98,8 +98,13 @@ public class EventHorizonBuilder
 
     private EventHorizonBuilder AddOpenApi()
     {
-        _builder.Services.AddEndpointsApiExplorer();
-        _builder.Services.AddSwaggerGen();
+        bool useSwagger = _builder.Configuration.GetValue<bool>("Global:Production");
+
+        if (!useSwagger)
+        {
+            _builder.Services.AddEndpointsApiExplorer();
+            _builder.Services.AddSwaggerGen();
+        }
 
         return this;
     }
