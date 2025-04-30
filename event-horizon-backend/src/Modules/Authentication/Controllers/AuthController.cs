@@ -65,14 +65,15 @@ public class AuthController : ControllerBase
             Active = true
         };
         
+        //await _userManager.AddToRoleAsync(user, "User");
         string token = CodeGeneration.New();
         await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName, token);
 
         CacheRegisterDto cacheRegisterDto = new CacheRegisterDto
         {
-            DataUser = user,
-            Token = token,
-            Password = model.Password
+            Email = user.Email,
+            Username = user.UserName,
+            Token = token
         };
 
         await _cacheService.SetAsync(user.Email, cacheRegisterDto, TimeSpan.FromMinutes(3));
@@ -80,29 +81,11 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Email sent successfully" });
     }
     
+    
+
     [HttpPost("verify")]
-    public async Task<IActionResult> Verify([FromQuery] string email, [FromQuery] string token)
+    public async Task<IActionResult> Verify()
     {
-        var userData = await _cacheService.GetAsync<CacheRegisterDto>(email);
-        
-        if (userData == null)
-            return BadRequest(new { message = "Expired Token" });
-
-        if (userData.Token != token)
-            return BadRequest(new { message = "Invalid Token" });
-        
-        User user = userData.DataUser;
-        
-        var result = await _userManager.CreateAsync(user, userData.Password);
-
-        if (!result.Succeeded)
-        {
-            Console.WriteLine(result.Errors);
-            return BadRequest(new { message = "User already exists" });
-        }
-
-        await _userManager.AddToRoleAsync(user, "User");
-        await _cacheService.RemoveAsync(email);
         return Ok(new { message = "User verified successfully" });
     }
 
