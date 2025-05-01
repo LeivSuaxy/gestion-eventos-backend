@@ -36,7 +36,6 @@
         <Folder Include="src\Modules\Events\DTO\AdminDTO\"/>
         <Folder Include="src\Modules\Events\Services\"/>
         <Folder Include="src\Modules\Events\Tests\"/>
-        <Folder Include="src\Modules\Users\Controllers\"/>
         <Folder Include="src\Modules\Users\Mappers\"/>
         <Folder Include="src\Modules\Users\Services\" />
         <Folder Include="src\Modules\Users\Tests\"/>
