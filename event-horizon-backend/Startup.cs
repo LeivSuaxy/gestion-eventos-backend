@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using event_horizon_backend.Core.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using event_horizon_backend.Core.Mail.Services;
 using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Identity;
 using StackExchange.Redis;
+using System.Text.Json;
 
 namespace event_horizon_backend;
 
@@ -66,12 +68,47 @@ public class EventHorizonBuilder
                 ValidateAudience = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
+                RequireExpirationTime = true,
+                RequireSignedTokens = true,
                 ClockSkew = TimeSpan.Zero,
                 ValidIssuer = _builder.Configuration["JWT:ValidIssuer"],
                 ValidAudience = _builder.Configuration["JWT:ValidAudience"],
+                RoleClaimType = ClaimTypes.Role,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                     _builder.Configuration["JWT:Secret"] ??
                     throw new InvalidOperationException("Secret must be not empty")))
+            };
+            
+            options.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                    return Task.CompletedTask;
+                },
+                OnChallenge = context =>
+                {
+                    // Ensure the response is properly returned when a token is missing or invalid
+                    if (context.AuthenticateFailure != null)
+                    {
+                        context.HandleResponse(); // Suppress the default behavior
+                        context.Response.StatusCode = 401;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonSerializer.Serialize(new { message = "Unauthorized access" });
+                        return context.Response.WriteAsync(result);
+                    }
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {
+                    Console.WriteLine("Token validated successfully");
+                    return Task.CompletedTask;
+                },
+                OnMessageReceived = context =>
+                {
+                    // This event is called when the token is missing entirely
+                    return Task.CompletedTask;
+                }
             };
         });
 

@@ -45,6 +45,7 @@ public class UserController : ControllerBase
         return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
     }
 
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(Guid id, User user)
     {
         if (!id.Equals(user.Id))
