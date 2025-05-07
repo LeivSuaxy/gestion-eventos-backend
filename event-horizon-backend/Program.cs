@@ -29,6 +29,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseCors("AllowSpecificOrigins");
+
 app.UseAuthentication();
 
 app.Use(async (context, next) =>

@@ -28,6 +28,7 @@ public class EventHorizonBuilder
     {
         return new EventHorizonBuilder(builder)
             .AddControllers()
+            .AddCors()
             .AddContext()
             .AddMailServices()
             .AddAuth()
@@ -47,6 +48,23 @@ public class EventHorizonBuilder
     {
         _builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(_builder.Configuration.GetConnectionString("DefaultConnection")));
+
+        return this;
+    }
+
+    private EventHorizonBuilder AddCors()
+    {
+        _builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigins",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+        });
 
         return this;
     }
