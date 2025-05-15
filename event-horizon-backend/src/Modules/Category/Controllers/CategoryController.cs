@@ -1,5 +1,7 @@
 using AutoMapper;
+using event_horizon_backend.Common.Extensions;
 using event_horizon_backend.Core.Context;
+using event_horizon_backend.Core.Models;
 using event_horizon_backend.Modules.Category.DTO.AdminDTO;
 using event_horizon_backend.Modules.Category.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,9 +28,17 @@ public class CategoryController : ControllerBase
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CategoryModel>>> GetCategories()
+    public async Task<ActionResult<PagedResponse<CategoryModel>>> GetCategories(
+        [FromQuery] PaginationParameters parameters)
     {
-        return await _context.Categories.ToListAsync();
+        IQueryable<CategoryModel> categories = _context.Categories.AsQueryable();
+
+        PagedResponse<CategoryModel> pagedResult = await categories.ToPagedListAsync(
+            parameters.PageNumber,
+            parameters.PageSize
+        );
+
+        return Ok(pagedResult);
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -36,15 +46,9 @@ public class CategoryController : ControllerBase
     public async Task<ActionResult<CategoryModel>> GetCategory(Guid id)
     {
         var categoryModel = await _context.Categories.FindAsync(id);
-        
-        if (categoryModel == null)
-        {
-            return NotFound();
-        }
-        
-        return categoryModel;
+        return categoryModel == null ? NotFound() : categoryModel;
     }
-  
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<CategoryModel>> CreateCategory(CategoryAdminCreateDTO categoryDto)
@@ -80,7 +84,7 @@ public class CategoryController : ControllerBase
 
             throw;
         }
-        
+
         return NoContent();
     }
 
@@ -89,12 +93,12 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> DeleteCategory(Guid id)
     {
         var categoryModel = await _context.Categories.FindAsync(id);
-        
+
         if (categoryModel == null)
         {
             return NotFound();
         }
-        
+
         categoryModel.DeletedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
 

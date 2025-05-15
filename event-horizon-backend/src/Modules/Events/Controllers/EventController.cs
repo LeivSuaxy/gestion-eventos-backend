@@ -1,5 +1,7 @@
 using AutoMapper;
+using event_horizon_backend.Common.Extensions;
 using event_horizon_backend.Core.Context;
+using event_horizon_backend.Core.Models;
 using event_horizon_backend.Modules.Events.DTO.PublicDTO;
 using event_horizon_backend.Modules.Events.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,14 +24,22 @@ public class EventController : ControllerBase
         _context = context;
         _mapper = mapper;
     }
-    
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<EventModel>>> GetEvents()
+    public async Task<ActionResult<PagedResponse<EventModel>>> GetEvents(
+        [FromQuery] PaginationParameters parameters)
     {
-        return await _context.Events.ToListAsync();
+        IQueryable<EventModel> events = _context.Events.AsQueryable();
+
+        PagedResponse<EventModel> pagedResult = await events.ToPagedListAsync(
+            parameters.PageNumber,
+            parameters.PageSize
+        );
+
+        return Ok(pagedResult);
     }
-    
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpGet("{id}")]
     public async Task<ActionResult<EventModel>> GetEvent(Guid id)
@@ -50,7 +60,7 @@ public class EventController : ControllerBase
     public async Task<ActionResult<EventModel>> CreateEvent(EventPublicCreateDTO eventPublicCreate)
     {
         EventModel eventModel = _mapper.Map<EventModel>(eventPublicCreate);
-        
+
         _context.Events.Add(eventModel);
         await _context.SaveChangesAsync();
 
@@ -79,6 +89,7 @@ public class EventController : ControllerBase
             {
                 return NotFound();
             }
+
             throw;
         }
 
