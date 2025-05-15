@@ -671,3 +671,5 @@ FodyWeavers.xsd
 *.sln.iml
 .jetclient/
 
+# Enviroments
+event-horizon-backend/.env

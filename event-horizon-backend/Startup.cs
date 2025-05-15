@@ -12,6 +12,7 @@ using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Identity;
 using StackExchange.Redis;
 using System.Text.Json;
+using DotNetEnv;
 
 namespace event_horizon_backend;
 
@@ -21,12 +22,14 @@ public class EventHorizonBuilder
 
     private EventHorizonBuilder(WebApplicationBuilder builder)
     {
+        Env.Load();
         _builder = builder;
     }
 
     public static WebApplicationBuilder Create(WebApplicationBuilder builder)
     {
         return new EventHorizonBuilder(builder)
+            .LoadEnvs()
             .AddControllers()
             .AddCors()
             .AddContext()
@@ -36,6 +39,38 @@ public class EventHorizonBuilder
             .AddOpenApi()
             .AddCacheService()
             .GetBuilder();
+    }
+
+    private EventHorizonBuilder LoadEnvs()
+    {
+        _builder.Configuration
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{_builder.Environment.EnvironmentName}.json", optional: true)
+            .AddEnvironmentVariables();
+        
+        string connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                                  $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                                  $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
+                                  $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
+                                  $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
+        
+        // Connection Strings
+        _builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+        _builder.Configuration["ConnectionStrings:RedisConnection"] = 
+            Environment.GetEnvironmentVariable("REDIS_CONNECTION");
+        
+        // MailSettings
+        _builder.Configuration["MailSettings:Host"] = Environment.GetEnvironmentVariable("MAIL_HOST");
+        _builder.Configuration["MailSettings:Port"] = Environment.GetEnvironmentVariable("MAIL_PORT");
+        _builder.Configuration["MailSettings:UserName"] = Environment.GetEnvironmentVariable("MAIL_USER");
+        _builder.Configuration["MailSettings:Password"] = Environment.GetEnvironmentVariable("MAIL_PASSWORD");
+        _builder.Configuration["MailSettings:From"] = Environment.GetEnvironmentVariable("MAIL_USER");
+        
+        // Jwt
+        _builder.Configuration["JWT:Secret"] = Environment.GetEnvironmentVariable("JWT_SECRET");
+        _builder.Configuration["JWT:TokenValidityInMinutes"] = Environment.GetEnvironmentVariable("JWT_VALIDITY_MINUTES");
+        
+        return this;
     }
 
     private EventHorizonBuilder AddControllers()
