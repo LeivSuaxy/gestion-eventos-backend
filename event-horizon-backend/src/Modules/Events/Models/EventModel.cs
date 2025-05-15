@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using event_horizon_backend.Common.Models;
+using event_horizon_backend.Modules.Category.Models;
 
 namespace event_horizon_backend.Modules.Events.Models;
 
@@ -33,5 +34,8 @@ public class EventModel : BaseModel
     // Foreign Keys
     /*[ForeignKey("OrganizerId")]
     public required UserModel Organizer { get; set; }*/
-
+    
+    [ForeignKey("CategoryId")]
+    public required CategoryModel Category { get; set; }
+    
 }
