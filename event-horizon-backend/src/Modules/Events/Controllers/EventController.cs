@@ -2,11 +2,14 @@ using AutoMapper;
 using event_horizon_backend.Core.Context;
 using event_horizon_backend.Modules.Events.DTO.PublicDTO;
 using event_horizon_backend.Modules.Events.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace event_horizon_backend.Modules.Events.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class EventController : ControllerBase
@@ -20,12 +23,14 @@ public class EventController : ControllerBase
         _mapper = mapper;
     }
     
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<EventModel>>> GetEvents()
     {
         return await _context.Events.ToListAsync();
     }
     
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpGet("{id}")]
     public async Task<ActionResult<EventModel>> GetEvent(Guid id)
     {
@@ -40,6 +45,7 @@ public class EventController : ControllerBase
     }
 
     // POST: api/Event
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<EventModel>> CreateEvent(EventPublicCreateDTO eventPublicCreate)
     {
@@ -52,10 +58,11 @@ public class EventController : ControllerBase
     }
 
     // PUT: api/Event/5
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateEvent(Guid id, EventModel eventModel)
     {
-        if (!id.Equals(eventModel.Id.ToString()))
+        if (!id.Equals(eventModel.Id))
         {
             return BadRequest();
         }
@@ -79,8 +86,9 @@ public class EventController : ControllerBase
     }
 
     // DELETE: api/Event/5
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteEvent(int id)
+    public async Task<IActionResult> DeleteEvent(Guid id)
     {
         var eventModel = await _context.Events.FindAsync(id);
         if (eventModel == null)
