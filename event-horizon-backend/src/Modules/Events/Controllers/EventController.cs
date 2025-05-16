@@ -2,8 +2,10 @@ using AutoMapper;
 using event_horizon_backend.Common.Extensions;
 using event_horizon_backend.Core.Context;
 using event_horizon_backend.Core.Models;
+using event_horizon_backend.Modules.Category.Models;
 using event_horizon_backend.Modules.Events.DTO.PublicDTO;
 using event_horizon_backend.Modules.Events.Models;
+using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -53,8 +55,18 @@ public class EventController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<EventModel>> CreateEvent(EventPublicCreateDTO eventPublicCreate)
     {
+        CategoryModel? category = await _context.Categories.FindAsync(eventPublicCreate.CategoryId);
+
+        if (category == null) return BadRequest($"Category with ID {eventPublicCreate.CategoryId} does not exist.");
+
+        User? user = await _context.Users.FindAsync(eventPublicCreate.OrganizerId);
+
+        if (user == null) return BadRequest($"User with ID {eventPublicCreate.OrganizerId} does not exists");
+        
         EventModel eventModel = _mapper.Map<EventModel>(eventPublicCreate);
 
+        eventModel.Category = category;
+        
         _context.Events.Add(eventModel);
         await _context.SaveChangesAsync();
 

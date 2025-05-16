@@ -1,5 +1,6 @@
 using AutoMapper;
 using event_horizon_backend.Core.Context;
+using event_horizon_backend.Core.Models;
 using event_horizon_backend.Modules.Events.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,8 +18,14 @@ public class PublicController : ControllerBase
         _context = context;
         _mapper = mapper;
     }
+    // Events views
+    /*[HttpGet("event/")]
+    public async Task<ActionResult<PagedResponse<EventModel>>> GetEvents()
+    {
+        throw NotImplementedException("Not implemented yet");
+    }*/
 
-    [HttpGet("{id}")]
+    [HttpGet("event/{id}")]
     public async Task<ActionResult<EventModel>> GetEventInfo(Guid id)
     {
         
