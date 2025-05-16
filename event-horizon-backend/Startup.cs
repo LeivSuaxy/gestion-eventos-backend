@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using StackExchange.Redis;
 using System.Text.Json;
 using DotNetEnv;
+using Microsoft.OpenApi.Models;
 
 namespace event_horizon_backend;
 
@@ -47,29 +48,30 @@ public class EventHorizonBuilder
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{_builder.Environment.EnvironmentName}.json", optional: true)
             .AddEnvironmentVariables();
-        
+
         string connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" +
                                   $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
                                   $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
                                   $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
                                   $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
-        
+
         // Connection Strings
         _builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
-        _builder.Configuration["ConnectionStrings:RedisConnection"] = 
+        _builder.Configuration["ConnectionStrings:RedisConnection"] =
             Environment.GetEnvironmentVariable("REDIS_CONNECTION");
-        
+
         // MailSettings
         _builder.Configuration["MailSettings:Host"] = Environment.GetEnvironmentVariable("MAIL_HOST");
         _builder.Configuration["MailSettings:Port"] = Environment.GetEnvironmentVariable("MAIL_PORT");
         _builder.Configuration["MailSettings:UserName"] = Environment.GetEnvironmentVariable("MAIL_USER");
         _builder.Configuration["MailSettings:Password"] = Environment.GetEnvironmentVariable("MAIL_PASSWORD");
         _builder.Configuration["MailSettings:From"] = Environment.GetEnvironmentVariable("MAIL_USER");
-        
+
         // Jwt
         _builder.Configuration["JWT:Secret"] = Environment.GetEnvironmentVariable("JWT_SECRET");
-        _builder.Configuration["JWT:TokenValidityInMinutes"] = Environment.GetEnvironmentVariable("JWT_VALIDITY_MINUTES");
-        
+        _builder.Configuration["JWT:TokenValidityInMinutes"] =
+            Environment.GetEnvironmentVariable("JWT_VALIDITY_MINUTES");
+
         return this;
     }
 
@@ -131,7 +133,7 @@ public class EventHorizonBuilder
                     _builder.Configuration["JWT:Secret"] ??
                     throw new InvalidOperationException("Secret must be not empty")))
             };
-            
+
             options.Events = new JwtBearerEvents
             {
                 OnAuthenticationFailed = context =>
@@ -150,6 +152,7 @@ public class EventHorizonBuilder
                         var result = JsonSerializer.Serialize(new { message = "Unauthorized access" });
                         return context.Response.WriteAsync(result);
                     }
+
                     return Task.CompletedTask;
                 },
                 OnTokenValidated = context =>
@@ -188,14 +191,51 @@ public class EventHorizonBuilder
 
     private EventHorizonBuilder AddOpenApi()
     {
-        bool useSwagger = _builder.Configuration.GetValue<bool>("Global:Production");
+        // We want Swagger in non-production environments
+        bool useSwagger = !_builder.Configuration.GetValue<bool>("Global:Production", false);
 
-        if (!useSwagger)
+        if (useSwagger)
         {
             _builder.Services.AddEndpointsApiExplorer();
-            _builder.Services.AddSwaggerGen();
-        }
+            _builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "E-Event Horizon API", 
+                    Version = "v1",
+                    Description = "API for Event Management System"
+                });
 
+                // Define JWT Bearer auth schema
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = 
+                        "JWT Authorization header using the Bearer scheme.\r\n\r\n" +
+                        "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+                        "Example: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
+            });
+        }
+    
         return this;
     }
 
@@ -206,7 +246,7 @@ public class EventHorizonBuilder
 
         return this;
     }
-    
+
     private EventHorizonBuilder AddCacheService()
     {
         bool useRedis = _builder.Configuration.GetValue<bool>("Redis:Enabled");
@@ -218,15 +258,15 @@ public class EventHorizonBuilder
                                               "localhost:6379"));
 
             _builder.Services.AddSingleton<ICacheService, RedisCacheService>();
-
         }
         else
         {
             _builder.Services.AddMemoryCache();
             _builder.Services.AddSingleton<ICacheService, MemoryCacheService>();
         }
-        
+
         return this;
     }
+
     private WebApplicationBuilder GetBuilder() => _builder;
 }

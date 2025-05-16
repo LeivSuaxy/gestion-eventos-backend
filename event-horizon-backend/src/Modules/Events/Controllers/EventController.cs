@@ -45,13 +45,7 @@ public class EventController : ControllerBase
     public async Task<ActionResult<EventModel>> GetEvent(Guid id)
     {
         var eventModel = await _context.Events.FindAsync(id);
-
-        if (eventModel == null)
-        {
-            return NotFound();
-        }
-
-        return eventModel;
+        return eventModel == null ? NotFound() : eventModel;
     }
 
     // POST: api/Event
