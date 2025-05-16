@@ -1,7 +1,9 @@
 using AutoMapper;
 using event_horizon_backend.Core.Context;
 using event_horizon_backend.Core.Models;
+using event_horizon_backend.Core.Services;
 using event_horizon_backend.Modules.Events.Models;
+using event_horizon_backend.Modules.Public.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace event_horizon_backend.Modules.Public.Controllers;
@@ -12,18 +14,23 @@ public class PublicController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IPublicService _service;
 
-    public PublicController(AppDbContext context, IMapper mapper)
+    public PublicController(AppDbContext context, IMapper mapper, IPublicService service)
     {
         _context = context;
         _mapper = mapper;
+        _service = service;
     }
     // Events views
-    /*[HttpGet("event/")]
-    public async Task<ActionResult<PagedResponse<EventModel>>> GetEvents()
+    [HttpGet("event/")]
+    public IActionResult GetEvents(
+        [FromQuery] PaginationParameters parameters)
     {
-        throw NotImplementedException("Not implemented yet");
-    }*/
+        var result = _service.GetEventsView(parameters);
+        
+        return Ok(result);
+    }
 
     [HttpGet("event/{id}")]
     public async Task<ActionResult<EventModel>> GetEventInfo(Guid id)

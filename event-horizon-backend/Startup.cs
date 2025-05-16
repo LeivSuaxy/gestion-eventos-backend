@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Identity;
 using StackExchange.Redis;
 using System.Text.Json;
 using DotNetEnv;
+using event_horizon_backend.Core.Services;
+using event_horizon_backend.Modules.Events.Services;
+using event_horizon_backend.Modules.Public.Services;
 using Microsoft.OpenApi.Models;
 
 namespace event_horizon_backend;
@@ -32,6 +35,7 @@ public class EventHorizonBuilder
         return new EventHorizonBuilder(builder)
             .LoadEnvs()
             .AddControllers()
+            .AddServices()
             .AddCors()
             .AddContext()
             .AddMailServices()
@@ -75,6 +79,14 @@ public class EventHorizonBuilder
         return this;
     }
 
+    private EventHorizonBuilder AddServices()
+    {
+        _builder.Services.AddScoped<IEventService, EventService>();
+        _builder.Services.AddScoped<IPublicService, PublicService>();
+
+        return this;
+    }
+    
     private EventHorizonBuilder AddControllers()
     {
         _builder.Services.AddControllers();
