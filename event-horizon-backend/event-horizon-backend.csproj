@@ -29,15 +29,12 @@
     <ItemGroup>
         <Folder Include="src\Common\Interfaces\" />
         <Folder Include="src\Modules\Authentication\Tests\"/>
-        <Folder Include="src\Modules\Category\DTO\"/>
-        <Folder Include="src\Modules\Category\Mappers\"/>
-        <Folder Include="src\Modules\Category\Models\"/>
+        <Folder Include="src\Modules\Category\DTO\PublicDTO\" />
         <Folder Include="src\Modules\Category\Services\"/>
         <Folder Include="src\Modules\Category\Tests\"/>
         <Folder Include="src\Modules\Events\DTO\AdminDTO\"/>
         <Folder Include="src\Modules\Events\Services\"/>
         <Folder Include="src\Modules\Events\Tests\"/>
-        <Folder Include="src\Modules\Public\Controllers\" />
         <Folder Include="src\Modules\Public\DTO\" />
         <Folder Include="src\Modules\Public\Mappers\" />
         <Folder Include="src\Modules\Public\Services\" />

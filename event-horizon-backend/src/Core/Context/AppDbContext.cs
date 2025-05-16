@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using event_horizon_backend.Common.Models;
+using event_horizon_backend.Modules.Category.Models;
 using event_horizon_backend.Modules.Events.Models;
 using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +17,7 @@ public class AppDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
     }
 
     public DbSet<EventModel> Events { get; set; } = null!;
+    public DbSet<CategoryModel> Categories { get; set; } = null!;
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,6 +37,7 @@ public class AppDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
         }
 
         modelBuilder.Entity<EventModel>().HasQueryFilter(e => e.Active);
+        modelBuilder.Entity<CategoryModel>().HasQueryFilter(e => e.Active);
     }
 
     public override int SaveChanges()
