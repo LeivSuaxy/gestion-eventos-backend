@@ -40,9 +40,18 @@ public class UserActionsService
         if (count >= eventModel.LimitParticipants)
             return new BadRequestObjectResult("The event is already fullish");
 
+        if (!eventModel.IsFree())
+        {
+            if (user.Balance < eventModel.Price)
+                return new BadRequestObjectResult("You don't have enough balance to be inscribed");
+            
+            user.Balance -= eventModel.Price;
+        }
+
         if (!await _assistanceService.CreateAssistance(eventModel, user))
             return new ConflictObjectResult("Error creating assistance");
 
+        await _context.SaveChangesAsync();
         return new OkObjectResult("Successfully inscribed");
     }
 }

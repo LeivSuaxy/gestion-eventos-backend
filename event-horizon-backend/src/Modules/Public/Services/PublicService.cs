@@ -18,6 +18,20 @@ public class PublicService
         _mapper = mapper;
         _eventService = eventService;
     }
+
+    public async Task<object> GetMainView(PaginationParameters parameters)
+    {
+        DateTime currentDate = DateTime.UtcNow;
+        var featuredEvents = _eventService.GetFeaturedEvents(parameters.PageSize, currentDate);
+        PagedResponse<EventModel> events = await _eventService.GetPaginated(parameters);
+        
+        return new
+        {
+            status = "success",
+            events,
+            featuredEvents
+        };
+    }
     
     public async Task<object> GetEventsView(PaginationParameters parameters)
     {

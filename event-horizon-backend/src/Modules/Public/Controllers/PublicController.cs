@@ -21,6 +21,21 @@ public class PublicController : ControllerBase
         _mapper = mapper;
         _service = service;
     }
+
+    [HttpGet("search/")]
+    public async Task<object> Search([FromQuery] string query)
+    {
+        return new { OPP = "OPP" };
+    }
+
+    [HttpGet("main/")]
+    public async Task<IActionResult> GetMain(
+        [FromQuery] PaginationParameters parameters)
+    {
+        var result = await _service.GetMainView(parameters);
+        return Ok(result);
+    }
+    
     // Events views
     [HttpGet("event/")]
     public async Task<IActionResult> GetEvents(
