@@ -2,8 +2,11 @@ using AutoMapper;
 using event_horizon_backend.Common.Extensions;
 using event_horizon_backend.Core.Context;
 using event_horizon_backend.Core.Models;
+using event_horizon_backend.Modules.Category.Models;
 using event_horizon_backend.Modules.Events.DTO.PublicDTO;
 using event_horizon_backend.Modules.Events.Models;
+using event_horizon_backend.Modules.Events.Services;
+using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +21,13 @@ public class EventController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly EventService _service;
 
-    public EventController(AppDbContext context, IMapper mapper)
+    public EventController(AppDbContext context, IMapper mapper, EventService service)
     {
         _context = context;
         _mapper = mapper;
+        _service = service;
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -53,12 +58,14 @@ public class EventController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<EventModel>> CreateEvent(EventPublicCreateDTO eventPublicCreate)
     {
-        EventModel eventModel = _mapper.Map<EventModel>(eventPublicCreate);
+        ActionResult<EventModel> result = await _service.Create(eventPublicCreate);
 
-        _context.Events.Add(eventModel);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetEvent), new { id = eventModel.Id }, eventModel);
+        if (result.Result is BadRequestObjectResult badRequest) return badRequest;
+        
+        if (result.Result is OkObjectResult okResult && okResult.Value is EventModel createdEvent)
+            return CreatedAtAction(nameof(GetEvent), new { id = createdEvent.Id }, createdEvent);
+        
+        return result;
     }
 
     // PUT: api/Event/5

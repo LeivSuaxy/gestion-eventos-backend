@@ -18,6 +18,7 @@ public class AppDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
 
     public DbSet<EventModel> Events { get; set; } = null!;
     public DbSet<CategoryModel> Categories { get; set; } = null!;
+    public DbSet<AssistanceModel> Assistance { get; set; } = null!;
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,6 +39,7 @@ public class AppDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
 
         modelBuilder.Entity<EventModel>().HasQueryFilter(e => e.Active);
         modelBuilder.Entity<CategoryModel>().HasQueryFilter(e => e.Active);
+        modelBuilder.Entity<AssistanceModel>().HasQueryFilter(e => e.Active);
     }
 
     public override int SaveChanges()

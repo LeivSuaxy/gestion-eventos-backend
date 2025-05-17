@@ -13,6 +13,10 @@ using Microsoft.AspNetCore.Identity;
 using StackExchange.Redis;
 using System.Text.Json;
 using DotNetEnv;
+using event_horizon_backend.Modules.Events.Services;
+using event_horizon_backend.Modules.Organizer.Services;
+using event_horizon_backend.Modules.Public.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 
 namespace event_horizon_backend;
@@ -32,6 +36,7 @@ public class EventHorizonBuilder
         return new EventHorizonBuilder(builder)
             .LoadEnvs()
             .AddControllers()
+            .AddServices()
             .AddCors()
             .AddContext()
             .AddMailServices()
@@ -75,6 +80,25 @@ public class EventHorizonBuilder
         return this;
     }
 
+    private EventHorizonBuilder AddServices()
+    {
+        Type[] objects =
+        {
+            typeof(EventService),
+            typeof(PublicService),
+            typeof(OrganizerService),
+            typeof(UserActionsService),
+            typeof(AssistanceService)
+        };
+
+        foreach (Type service in objects)
+        {
+            _builder.Services.AddScoped(service);
+        }
+
+        return this;
+    }
+
     private EventHorizonBuilder AddControllers()
     {
         _builder.Services.AddControllers();
@@ -101,6 +125,16 @@ public class EventHorizonBuilder
                         .AllowAnyMethod()
                         .AllowCredentials();
                 });
+        });
+
+        return this;
+    }
+
+    private EventHorizonBuilder AddLocalUse()
+    {
+        _builder.WebHost.ConfigureKestrel(serverOptions =>
+        {
+            serverOptions.ListenAnyIP(5000);
         });
 
         return this;
@@ -176,7 +210,12 @@ public class EventHorizonBuilder
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-        _builder.Services.AddAuthorization();
+        _builder.Services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+        });
         _builder.Services.AddScoped<TokenService>();
 
         return this;

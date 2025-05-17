@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using event_horizon_backend.Core.Context;
@@ -11,9 +12,11 @@ using event_horizon_backend.Core.Context;
 namespace event_horizon_backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250516213708_Added Assistance and modified Events")]
+    partial class AddedAssistanceandmodifiedEvents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -256,9 +259,6 @@ namespace event_horizon_backend.Migrations
                     b.Property<Guid>("OrganizerId")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<bool>("RequireAcceptance")
                         .HasColumnType("boolean");
 
@@ -289,9 +289,6 @@ namespace event_horizon_backend.Migrations
 
                     b.Property<bool>("Active")
                         .HasColumnType("boolean");
-
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -445,8 +442,6 @@ namespace event_horizon_backend.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Organizer");
-
-                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

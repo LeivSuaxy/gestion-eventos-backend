@@ -28,23 +28,26 @@
 
     <ItemGroup>
         <Folder Include="src\Common\Interfaces\" />
+        <Folder Include="src\Core\Services\" />
         <Folder Include="src\Modules\Authentication\Tests\"/>
         <Folder Include="src\Modules\Category\DTO\PublicDTO\" />
         <Folder Include="src\Modules\Category\Services\"/>
         <Folder Include="src\Modules\Category\Tests\"/>
         <Folder Include="src\Modules\Events\DTO\AdminDTO\"/>
-        <Folder Include="src\Modules\Events\Services\"/>
         <Folder Include="src\Modules\Events\Tests\"/>
+        <Folder Include="src\Modules\Organizer\DTO\" />
+        <Folder Include="src\Modules\Organizer\Mappers\" />
+        <Folder Include="src\Modules\Organizer\Models\" />
+        <Folder Include="src\Modules\Organizer\Tests\" />
         <Folder Include="src\Modules\Public\DTO\" />
         <Folder Include="src\Modules\Public\Mappers\" />
-        <Folder Include="src\Modules\Public\Services\" />
         <Folder Include="src\Modules\Public\Tests\" />
         <Folder Include="src\Modules\Users\DTO\" />
         <Folder Include="src\Modules\Users\Mappers\"/>
         <Folder Include="src\Modules\Users\Services\" />
         <Folder Include="src\Modules\Users\Tests\"/>
         <Folder Include="Tests\"/>
-        <Folder Include="wwwroot\images\"/>
+        <Folder Include="wwwroot\images\" />
         <None Include="Templates\Emails\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
