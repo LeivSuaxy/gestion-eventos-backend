@@ -445,6 +445,8 @@ namespace event_horizon_backend.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Organizer");
+
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

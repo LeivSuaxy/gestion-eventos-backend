@@ -238,9 +238,8 @@ public class EventHorizonBuilder
             _builder.Services.AddEndpointsApiExplorer();
             _builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "E-Event Horizon API",
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "E-Event Horizon API", 
                     Version = "v1",
                     Description = "API for Event Management System"
                 });
@@ -248,7 +247,7 @@ public class EventHorizonBuilder
                 // Define JWT Bearer auth schema
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description =
+                    Description = 
                         "JWT Authorization header using the Bearer scheme.\r\n\r\n" +
                         "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
                         "Example: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"",
@@ -270,12 +269,12 @@ public class EventHorizonBuilder
                                 Id = "Bearer"
                             }
                         },
-                        new string[] { }
+                        new string[] {}
                     }
                 });
             });
         }
-
+    
         return this;
     }
 
