@@ -40,11 +40,15 @@ public class EventModel : BaseModel
     [Column(TypeName = "integer")]
     public int LimitParticipants { get; set; } = 30;
     
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal Price { get; set; } = 0;
+    
     // Foreign Keys
     [ForeignKey("OrganizerId")]
     public required User Organizer { get; set; }
     
     [ForeignKey("CategoryId")]
     public required CategoryModel Category { get; set; }
-    
+
+    public bool IsFree() => Price == 0;
 }

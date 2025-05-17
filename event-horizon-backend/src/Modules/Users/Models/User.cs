@@ -16,12 +16,17 @@ public class User : IdentityUser<Guid>
     [Column(TypeName = "date")]
     public DateTime? DeletedAt { get; set; }
     
+    [Column(TypeName = "boolean")]
     public bool Active { get; set; }
 
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal Balance { get; set; } = 0;
+    
     public User()
     {
         CreatedAt = DateTime.UtcNow.Date;
         UpdatedAt = DateTime.UtcNow.Date;
+        Balance = 0;
         Active = true;
     }
 

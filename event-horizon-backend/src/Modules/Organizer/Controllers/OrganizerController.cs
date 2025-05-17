@@ -28,10 +28,10 @@ public class OrganizerController : ControllerBase
     }
     
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Organizer,Admin")]
-    [HttpGet("{id}")]
+    [HttpGet("event/{id}")]
     public async Task<ActionResult<EventModel>> GetEvent(Guid id)
     {
-        var eventModel = await _context.Events
+        EventModel? eventModel = await _context.Events
             .Include(e => e.Organizer)
             .FirstOrDefaultAsync(e => e.Id == id);
         
@@ -52,7 +52,7 @@ public class OrganizerController : ControllerBase
     }
     
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Organizer,Admin")]
-    [HttpPost]
+    [HttpPost("event/")]
     public async Task<ActionResult<EventModel>> CreateEvent(EventPublicCreateDTO eventPublicCreate)
     {
         ActionResult<EventModel> result = await _service.Create(eventPublicCreate);

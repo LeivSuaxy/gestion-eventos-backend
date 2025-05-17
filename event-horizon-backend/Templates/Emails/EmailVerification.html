@@ -25,7 +25,7 @@
             border-radius: 5px 5px 0 0;
             margin: -20px -20px 20px;
         }
-        .button {
+        .box {
             display: inline-block;
             background-color: #4a6fdc;
             color: white !important;
@@ -54,10 +54,8 @@
         <p>Hello {{userName}},</p>
         <p>Thank you for registering with our service. Please verify your email address by clicking the button below:</p>
         <p style="text-align: center;">
-            <a class="button" href="{{verificationLink}}">Verify Email</a>
+            <div class="box">{{verificationCode}}</div>
         </p>
-        <p>If the button doesn't work, copy and paste this link into your browser:</p>
-        <p style="word-break: break-all;">{{verificationLink}}</p>
         <div class="footer">
             <p>This is an automated message. Please do not reply to this email.</p>
         </div>

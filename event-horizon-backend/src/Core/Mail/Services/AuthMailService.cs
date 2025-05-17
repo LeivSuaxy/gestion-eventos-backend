@@ -25,7 +25,7 @@ public class AuthMailService
         string template = await LoadTemplateAsync("EmailVerification.html");
         string body = template
             .Replace("{{userName}}", userName)
-            .Replace("{{verificationLink}}", $"{_mailSettings.AppUrl}/verify?email={email}&token={token}");
+            .Replace("{{verificationCode}}", token);
 
         await SendEmailAsync(email, "Verify your email address", body);
     }
