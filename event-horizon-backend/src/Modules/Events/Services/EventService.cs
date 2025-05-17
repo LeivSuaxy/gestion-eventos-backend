@@ -1,11 +1,16 @@
 using AutoMapper;
+using event_horizon_backend.Common.Extensions;
 using event_horizon_backend.Core.Context;
-using event_horizon_backend.Core.Services;
+using event_horizon_backend.Core.Models;
+using event_horizon_backend.Modules.Category.Models;
+using event_horizon_backend.Modules.Events.DTO.PublicDTO;
 using event_horizon_backend.Modules.Events.Models;
+using event_horizon_backend.Modules.Users.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace event_horizon_backend.Modules.Events.Services;
 
-public class EventService : IEventService
+public class EventService
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
@@ -15,7 +20,42 @@ public class EventService : IEventService
         _context = context;
         _mapper = mapper;
     }
-    
+
+    public async Task<ActionResult<EventModel>> Create(EventPublicCreateDTO eventPublicCreate)
+    {
+        CategoryModel? category = await _context.Categories.FindAsync(eventPublicCreate.CategoryId);
+
+        if (category == null)
+            return new BadRequestObjectResult($"Category with ID {eventPublicCreate.CategoryId} does not exist.");
+
+        User? user = await _context.Users.FindAsync(eventPublicCreate.OrganizerId);
+
+        if (user == null)
+            return new BadRequestObjectResult($"User with ID {eventPublicCreate.OrganizerId} does not exists");
+
+        EventModel eventModel = _mapper.Map<EventModel>(eventPublicCreate);
+
+        eventModel.Category = category;
+        eventModel.Organizer = user;
+
+        _context.Events.Add(eventModel);
+        await _context.SaveChangesAsync();
+
+        return new OkObjectResult(eventModel);
+    }
+
+    public async Task<PagedResponse<EventModel>> GetPaginated(PaginationParameters parameters)
+    {
+        IQueryable<EventModel> events = _context.Events.AsQueryable();
+
+        PagedResponse<EventModel> pagedResult = await events.ToPagedListAsync(
+            parameters.PageNumber,
+            parameters.PageSize
+        );
+
+        return pagedResult;
+    }
+
     public object GetFeaturedEvents(int quantity, DateTime currentDate)
     {
         // Get top 2 events with highest attendance

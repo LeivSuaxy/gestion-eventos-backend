@@ -5,6 +5,7 @@ using event_horizon_backend.Core.Models;
 using event_horizon_backend.Modules.Category.Models;
 using event_horizon_backend.Modules.Events.DTO.PublicDTO;
 using event_horizon_backend.Modules.Events.Models;
+using event_horizon_backend.Modules.Events.Services;
 using event_horizon_backend.Modules.Users.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -20,11 +21,13 @@ public class EventController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly EventService _service;
 
-    public EventController(AppDbContext context, IMapper mapper)
+    public EventController(AppDbContext context, IMapper mapper, EventService service)
     {
         _context = context;
         _mapper = mapper;
+        _service = service;
     }
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
@@ -55,22 +58,14 @@ public class EventController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<EventModel>> CreateEvent(EventPublicCreateDTO eventPublicCreate)
     {
-        CategoryModel? category = await _context.Categories.FindAsync(eventPublicCreate.CategoryId);
+        ActionResult<EventModel> result = await _service.Create(eventPublicCreate);
 
-        if (category == null) return BadRequest($"Category with ID {eventPublicCreate.CategoryId} does not exist.");
-
-        User? user = await _context.Users.FindAsync(eventPublicCreate.OrganizerId);
-
-        if (user == null) return BadRequest($"User with ID {eventPublicCreate.OrganizerId} does not exists");
+        if (result.Result is BadRequestObjectResult badRequest) return badRequest;
         
-        EventModel eventModel = _mapper.Map<EventModel>(eventPublicCreate);
-
-        eventModel.Category = category;
+        if (result.Result is OkObjectResult okResult && okResult.Value is EventModel createdEvent)
+            return CreatedAtAction(nameof(GetEvent), new { id = createdEvent.Id }, createdEvent);
         
-        _context.Events.Add(eventModel);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetEvent), new { id = eventModel.Id }, eventModel);
+        return result;
     }
 
     // PUT: api/Event/5
