@@ -249,7 +249,7 @@ public class EventHorizonBuilder
     private EventHorizonBuilder AddOpenApi()
     {
         // We want Swagger in non-production environments
-        bool useSwagger = !_builder.Configuration.GetValue<bool>("Global:Production", false);
+        bool useSwagger = true;//!_builder.Configuration.GetValue<bool>("Global:Production", false);
 
         if (useSwagger)
         {
