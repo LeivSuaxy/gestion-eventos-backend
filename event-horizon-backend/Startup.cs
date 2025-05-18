@@ -211,12 +211,12 @@ public class EventHorizonBuilder
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-        _builder.Services.AddAuthorization(options =>
+        /*builder.Services.AddAuthorization(options =>
         {
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
-        });
+        });*/
         _builder.Services.ConfigureApplicationCookie(options =>
         {
             options.Events.OnRedirectToLogin = context =>
