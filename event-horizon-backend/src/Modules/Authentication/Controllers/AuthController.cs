@@ -3,6 +3,7 @@ using event_horizon_backend.Core.Mail.Services;
 using event_horizon_backend.Core.Utils;
 using event_horizon_backend.Modules.Authentication.DTO;
 using event_horizon_backend.Modules.Users.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,6 +34,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Login(LoginDto model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
@@ -54,6 +56,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterDto model)
     {
         User user = new User
@@ -81,6 +84,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("verify")]
+    [AllowAnonymous]
     public async Task<IActionResult> Verify([FromQuery] string email, [FromQuery] string token)
     {
         var userData = await _cacheService.GetAsync<CacheRegisterDto>(email);
