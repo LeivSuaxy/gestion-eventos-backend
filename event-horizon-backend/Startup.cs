@@ -217,6 +217,23 @@ public class EventHorizonBuilder
                 .RequireAuthenticatedUser()
                 .Build();
         });
+        _builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync(JsonSerializer.Serialize(new { message = "Unauthorized" }));
+            };
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync(JsonSerializer.Serialize(new { message = "Forbidden" }));
+            };
+        });
+
+        
         _builder.Services.AddScoped<TokenService>();
 
         return this;
