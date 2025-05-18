@@ -217,7 +217,7 @@ public class EventHorizonBuilder
             // You can add named policies for specific roles if needed
             // options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
         });
-        /*_builder.Services.ConfigureApplicationCookie(options =>
+        _builder.Services.ConfigureApplicationCookie(options =>
         {
             options.Events.OnRedirectToLogin = context =>
             {
@@ -231,7 +231,19 @@ public class EventHorizonBuilder
                 context.Response.ContentType = "application/json";
                 return context.Response.WriteAsync(JsonSerializer.Serialize(new { message = "Forbidden" }));
             };
-        });*/
+            options.Events.OnRedirectToLogout = context =>
+            {
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync(JsonSerializer.Serialize(new { message = "Logged out" }));
+            };
+            // Prevent other redirects like two-factor auth
+            options.Events.OnRedirectToReturnUrl = context =>
+            {
+                context.Response.StatusCode = 200;
+                return Task.CompletedTask;
+            };
+        });
         
         _builder.Services.AddScoped<TokenService>();
 
