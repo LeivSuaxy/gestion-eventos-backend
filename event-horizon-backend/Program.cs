@@ -8,6 +8,12 @@ WebApplicationBuilder builder = EventHorizonBuilder.Create(WebApplication.Create
 
 WebApplication app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
 await RolesService.InitializeRoles(app.Services);
 
 app.UseExceptionHandler(errorApp =>
@@ -50,11 +56,5 @@ app.Use(async (context, next) =>
 app.UseAuthorization();
 
 app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
-}
 
 app.Run();
