@@ -15,12 +15,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-RUN dotnet tool install --global dotnet-ef --version 8.0.*
-ENV PATH="$PATH:/root/.dotnet/tools"
-
 # Railway automatically assigns a PORT - make sure your app reads from it
 ENV ASPNETCORE_URLS=http://+:$PORT
 ENV Global__Production=true
 ENV Redis__Enabled=false
 
-ENTRYPOINT ["sh", "-c", "dotnet ef database update --no-build && dotnet event-horizon-backend.dll"]
+ENTRYPOINT ["sh", "-c","dotnet", "event-horizon-backend.dll"]

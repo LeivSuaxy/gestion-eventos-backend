@@ -1,6 +1,8 @@
 using event_horizon_backend;
 using event_horizon_backend.Modules.Authentication.Services;
 using System.Text.Json;
+using event_horizon_backend.Core.Context;
+using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = EventHorizonBuilder.Create(WebApplication.CreateBuilder());
 
@@ -51,5 +53,11 @@ app.Use(async (context, next) =>
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 app.Run();
