@@ -178,17 +178,12 @@ public class EventHorizonBuilder
                 },
                 OnChallenge = context =>
                 {
-                    // Ensure the response is properly returned when a token is missing or invalid
-                    if (context.AuthenticateFailure != null)
-                    {
-                        context.HandleResponse(); // Suppress the default behavior
-                        context.Response.StatusCode = 401;
-                        context.Response.ContentType = "application/json";
-                        var result = JsonSerializer.Serialize(new { message = "Unauthorized access" });
-                        return context.Response.WriteAsync(result);
-                    }
-
-                    return Task.CompletedTask;
+                    // Handle all challenges, whether token is invalid or missing
+                    context.HandleResponse();
+                    context.Response.StatusCode = 401;
+                    context.Response.ContentType = "application/json";
+                    var result = JsonSerializer.Serialize(new { message = "Unauthorized access" });
+                    return context.Response.WriteAsync(result);
                 },
                 OnTokenValidated = context =>
                 {
@@ -211,13 +206,18 @@ public class EventHorizonBuilder
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-        /*builder.Services.AddAuthorization(options =>
+        
+        _builder.Services.AddAuthorization(options =>
         {
+            // This makes all endpoints require authentication by default
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build();
-        });*/
-        _builder.Services.ConfigureApplicationCookie(options =>
+            
+            // You can add named policies for specific roles if needed
+            // options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+        });
+        /*_builder.Services.ConfigureApplicationCookie(options =>
         {
             options.Events.OnRedirectToLogin = context =>
             {
@@ -231,8 +231,7 @@ public class EventHorizonBuilder
                 context.Response.ContentType = "application/json";
                 return context.Response.WriteAsync(JsonSerializer.Serialize(new { message = "Forbidden" }));
             };
-        });
-
+        });*/
         
         _builder.Services.AddScoped<TokenService>();
 

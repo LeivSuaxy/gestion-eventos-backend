@@ -3,6 +3,7 @@ using event_horizon_backend.Core.Context;
 using event_horizon_backend.Core.Models;
 using event_horizon_backend.Modules.Events.Models;
 using event_horizon_backend.Modules.Public.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace event_horizon_backend.Modules.Public.Controllers;
@@ -23,12 +24,14 @@ public class PublicController : ControllerBase
     }
 
     [HttpGet("search/")]
+    [AllowAnonymous]
     public async Task<object> Search([FromQuery] string query)
     {
         return new { OPP = "OPP" };
     }
 
     [HttpGet("main/")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetMain(
         [FromQuery] PaginationParameters parameters)
     {
@@ -38,6 +41,7 @@ public class PublicController : ControllerBase
     
     // Events views
     [HttpGet("event/")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetEvents(
         [FromQuery] PaginationParameters parameters)
     {
@@ -47,6 +51,7 @@ public class PublicController : ControllerBase
     }
 
     [HttpGet("event/{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<EventModel>> GetEventInfo(Guid id)
     {
         
