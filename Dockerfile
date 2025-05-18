@@ -13,7 +13,7 @@ RUN dotnet publish "event-horizon-backend.csproj" -c Release -o /app/publish /p:
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /event-horizon-backend/publish .
 
 # Railway automatically assigns a PORT - make sure your app reads from it
 ENV ASPNETCORE_URLS=http://+:$PORT
