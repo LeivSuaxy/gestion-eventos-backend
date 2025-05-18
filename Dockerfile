@@ -20,4 +20,4 @@ ENV ASPNETCORE_URLS=http://+:$PORT
 ENV Global__Production=true
 ENV Redis__Enabled=false
 
-ENTRYPOINT ["sh", "-c","dotnet", "event-horizon-backend.dll"]
+ENTRYPOINT ["sh", "-c","dotnet", "/event-horizon-backend/event-horizon-backend.dll"]
