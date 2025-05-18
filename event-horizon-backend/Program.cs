@@ -28,9 +28,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "E-Event Horizon API v1"));
 }
 
-app.MapRazorPages();
-app.MapControllers();
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

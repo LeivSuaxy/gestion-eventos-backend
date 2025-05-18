@@ -221,14 +221,7 @@ public class EventHorizonBuilder
 
         return this;
     }
-
-    private EventHorizonBuilder AddRazor()
-    {
-        _builder.Services.AddRazorPages();
-        _builder.Services.AddControllersWithViews();
-
-        return this;
-    }
+    
     private EventHorizonBuilder AddMappers()
     {
         _builder.Services.AddAutoMapper(typeof(Program).Assembly);
