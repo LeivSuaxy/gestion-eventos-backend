@@ -222,6 +222,13 @@ public class EventHorizonBuilder
         return this;
     }
 
+    private EventHorizonBuilder AddRazor()
+    {
+        _builder.Services.AddRazorPages();
+        _builder.Services.AddControllersWithViews();
+
+        return this;
+    }
     private EventHorizonBuilder AddMappers()
     {
         _builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -289,7 +296,7 @@ public class EventHorizonBuilder
 
     private EventHorizonBuilder AddCacheService()
     {
-        bool useRedis = _builder.Configuration.GetValue<bool>("Redis:Enabled");
+        bool useRedis = false; //_builder.Configuration.GetValue<bool>("Redis:Enabled");
 
         if (useRedis)
         {
