@@ -5,6 +5,8 @@ using event_horizon_backend.Core.Context;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = EventHorizonBuilder.Create(WebApplication.CreateBuilder());
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://*:{port}");
 
 WebApplication app = builder.Build();
 
@@ -56,8 +58,5 @@ app.Use(async (context, next) =>
 app.UseAuthorization();
 
 app.MapControllers();
-
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://*:{port}");
 
 app.Run();
