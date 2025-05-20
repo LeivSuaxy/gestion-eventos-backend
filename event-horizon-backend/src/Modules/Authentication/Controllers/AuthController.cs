@@ -59,6 +59,23 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterDto model)
     {
+        var passwordValidators = _userManager.PasswordValidators;
+        foreach (var validator in passwordValidators)
+        {
+            var result = await validator.ValidateAsync(_userManager, null, model.Password);
+            if (!result.Succeeded)
+            {
+                var errorMessages = result.Errors.Select(e => e.Description).ToList();
+                return BadRequest(new { message = "Invalid password", errors = errorMessages });
+            }
+        }
+        
+        var existingUser = await _userManager.FindByEmailAsync(model.Email);
+        if (existingUser != null)
+        {
+            return BadRequest(new { message = "Email is already registered" });
+        }
+        
         User user = new User
         {
             UserName = model.Username,
@@ -101,8 +118,9 @@ public class AuthController : ControllerBase
 
         if (!result.Succeeded)
         {
-            Console.WriteLine(result.Errors);
-            return BadRequest(new { message = "User already exists" });
+            var errorMessages = result.Errors.Select(e => e.Description).ToList();
+            Console.WriteLine(string.Join(", ", errorMessages));
+            return BadRequest(new { message = "Registration failed", errors = errorMessages });
         }
 
         await _userManager.AddToRoleAsync(user, "User");
