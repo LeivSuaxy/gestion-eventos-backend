@@ -317,7 +317,7 @@ public class EventHorizonBuilder
 
     private EventHorizonBuilder AddCacheService()
     {
-        bool useRedis = false; //_builder.Configuration.GetValue<bool>("Redis:Enabled");
+        bool useRedis = _builder.Configuration.GetValue<bool>("Redis:Enabled");
 
         if (useRedis)
         {
