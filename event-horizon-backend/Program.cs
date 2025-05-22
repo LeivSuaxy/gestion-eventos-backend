@@ -46,16 +46,39 @@ app.UseCors("AllowSpecificOrigins");
 
 app.UseAuthentication();
 
+// Place this BEFORE app.UseAuthorization()
 app.Use(async (context, next) =>
 {
+    // Store the original response body stream
+    var originalBodyStream = context.Response.Body;
+    
+    // Create a new memory stream
+    using var responseBody = new MemoryStream();
+    context.Response.Body = responseBody;
+    
+    // Let the request continue
     await next();
     
-    if (context.Response.StatusCode == 401)
+    // Check if it's a 401 response
+    if (context.Response.StatusCode == 401 && !context.Response.HasStarted)
     {
+        // Reset the stream
+        context.Response.Body = originalBodyStream;
+        context.Response.Clear();
+        
+        // Set status code and content type
+        context.Response.StatusCode = 401;
         context.Response.ContentType = "application/json";
+        
+        // Write the response
         var result = JsonSerializer.Serialize(new { message = "Unauthorized" });
         await context.Response.WriteAsync(result);
+        return;
     }
+    
+    // Copy the modified response to the original stream
+    responseBody.Seek(0, SeekOrigin.Begin);
+    await responseBody.CopyToAsync(originalBodyStream);
 });
 
 app.UseAuthorization();
