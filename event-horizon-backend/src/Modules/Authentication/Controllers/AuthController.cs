@@ -19,6 +19,7 @@ public class AuthController : ControllerBase
     private readonly AuthMailService _authMailService;
     private readonly ICacheService _cacheService;
     private const string PendingRegistrationKey = "pending_registrations";
+
     public AuthController(
         UserManager<User> userManager,
         SignInManager<User> signInManager,
@@ -50,6 +51,13 @@ public class AuthController : ControllerBase
 
         return Ok(new
         {
+            user = new
+            {
+                user.Id,
+                user.UserName,
+                user.Balance,
+                user.Email
+            },
             token,
             roles
         });
@@ -69,13 +77,13 @@ public class AuthController : ControllerBase
                 return BadRequest(new { message = "Invalid password", errors = errorMessages });
             }
         }
-        
+
         var existingUser = await _userManager.FindByEmailAsync(model.Email);
         if (existingUser != null)
         {
             return BadRequest(new { message = "Email is already registered" });
         }
-        
+
         User user = new User
         {
             UserName = model.Username,
@@ -84,17 +92,18 @@ public class AuthController : ControllerBase
             UpdatedAt = DateTime.UtcNow,
             Active = true
         };
-        
+
         string token = CodeGeneration.New();
         try
         {
             await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName, token);
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             Console.WriteLine($"Error sending email: {ex.Message}");
             return StatusCode(500, new { message = "Failed to send verification email" });
         }
-        
+
 
         CacheRegisterDto cacheRegisterDto = new CacheRegisterDto
         {
@@ -104,24 +113,24 @@ public class AuthController : ControllerBase
         };
 
         await _cacheService.SetAsync(user.Email, cacheRegisterDto, TimeSpan.FromMinutes(3));
-        
+
         return Ok(new { message = "Email sent successfully" });
     }
-    
+
     [HttpPost("verify")]
     [AllowAnonymous]
     public async Task<IActionResult> Verify([FromQuery] string email, [FromQuery] string token)
     {
         var userData = await _cacheService.GetAsync<CacheRegisterDto>(email);
-        
+
         if (userData == null)
             return BadRequest(new { message = "Expired Token" });
 
         if (userData.Token != token)
             return BadRequest(new { message = "Invalid Token" });
-        
+
         User user = userData.DataUser;
-        
+
         var result = await _userManager.CreateAsync(user, userData.Password);
 
         if (!result.Succeeded)
