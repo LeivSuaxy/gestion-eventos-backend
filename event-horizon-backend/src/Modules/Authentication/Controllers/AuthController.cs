@@ -86,7 +86,15 @@ public class AuthController : ControllerBase
         };
         
         string token = CodeGeneration.New();
-        await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName, token);
+        try
+        {
+            await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName, token);
+        } catch (Exception ex)
+        {
+            Console.WriteLine($"Error sending email: {ex.Message}");
+            return StatusCode(500, new { message = "Failed to send verification email" });
+        }
+        
 
         CacheRegisterDto cacheRegisterDto = new CacheRegisterDto
         {
