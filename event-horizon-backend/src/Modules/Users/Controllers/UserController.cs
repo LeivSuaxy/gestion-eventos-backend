@@ -72,6 +72,42 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("balance/{id}")]
+    public async Task<IActionResult> UpdateUserBalance(Guid id, decimal balance)
+    {
+        if (!id.Equals(id))
+        {
+            return BadRequest();
+        }
+        
+        var user = await _context.Users.FindAsync(id);
+        
+        if (user == null)
+        {
+            return NotFound();
+        }
+        
+        user.Balance = balance;
+        
+        _context.Entry(user).State = EntityState.Modified;
+        
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!UserExists(id))
+            {
+                return NotFound();
+            }
+
+            throw;
+        }
+        
+        return NoContent();
+    }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(Guid id)
     {

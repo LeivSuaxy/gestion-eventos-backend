@@ -90,7 +90,8 @@ public class AuthController : ControllerBase
             Email = model.Email,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            Active = true
+            Active = true,
+            Balance = 5
         };
 
         string token = CodeGeneration.New();
