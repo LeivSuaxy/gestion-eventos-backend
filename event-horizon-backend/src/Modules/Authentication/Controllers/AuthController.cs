@@ -41,9 +41,12 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Login(LoginDto model)
     {
-        var user = await _userManager.FindByEmailAsync(model.Email);
+        User? user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
             return Unauthorized(new { message = "Invalid email or not find user" });
+        
+        if (user.Active == false)
+            return Unauthorized(new { message = "User is not active" });
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
         if (!result.Succeeded)
