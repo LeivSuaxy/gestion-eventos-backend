@@ -105,7 +105,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Registration failed", errors = errorMessages });
         }
 
-        if (user.Active)
+        if (!user.Active)
         {
             await _userManager.AddToRoleAsync(user, "Organizer");
         }
