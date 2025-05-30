@@ -1,6 +1,5 @@
 using event_horizon_backend.Core.Cache.Interfaces;
 using event_horizon_backend.Core.Mail.Services;
-using event_horizon_backend.Core.Utils;
 using event_horizon_backend.Modules.Authentication.DTO;
 using event_horizon_backend.Modules.Authentication.Services;
 using event_horizon_backend.Modules.Users.Models;
@@ -72,11 +71,11 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register(RegisterDto model)
     {
         var result = await _service.Register(model);
+        Console.WriteLine(result.Result);
+        if (result.Result is BadRequestResult badRequest)
+            return BadRequest(badRequest);
         
-        if (result.Result is BadRequestObjectResult badRequest)
-            return BadRequest(badRequest.Value);
-        
-        if (result.Result is OkObjectResult)
+        if (result.Result is OkResult)
             return Ok(new { message = "Email sent successfully" });
         
         return StatusCode(500, new { message = "An error occurred while processing your request" });
