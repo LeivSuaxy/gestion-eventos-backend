@@ -103,7 +103,7 @@ public class AuthService
             Email = model.Email,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
-            Active = false,
+            Active = true,
             Balance = 10
         };
     }
