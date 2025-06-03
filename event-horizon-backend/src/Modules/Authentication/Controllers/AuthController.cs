@@ -41,6 +41,7 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Login(LoginDto model)
     {
+        // Ver si existe el email
         User? user = await _userManager.FindByEmailAsync(model.Email);
         if (user == null)
             return Unauthorized(new { message = "Invalid email or not find user" });
@@ -48,11 +49,15 @@ public class AuthController : ControllerBase
         if (user.Active == false)
             return Unauthorized(new { message = "User is not active" });
 
+        // Verificar si la contraseña es correcta
         var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
         if (!result.Succeeded)
             return Unauthorized(new { message = "Invalid email or password" });
 
+        // Se toman los roles del usuario
         IList<string> roles = await _userManager.GetRolesAsync(user);
+
+        // Se genera el token JWT
         string token = _tokenService.GenerateToken(user, roles);
 
         return Ok(new
@@ -73,8 +78,11 @@ public class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterDto model)
     {
+        // Invoca al servicio para que registre
         var result = await _service.Register(model);
         Console.WriteLine(result.Result);
+
+        // Verifica si el resultado es BadRequest, Ok o un error interno
         if (result.Result is BadRequestResult badRequest)
             return BadRequest(badRequest);
         
@@ -107,6 +115,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Registration failed", errors = errorMessages });
         }
 
+        // Se usa condicional con el balance del usuario, si es 10 es organizador por defecto
         if (user.Balance == 10)
         {
             await _userManager.AddToRoleAsync(user, "Organizer");

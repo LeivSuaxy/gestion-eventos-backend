@@ -30,6 +30,7 @@ public class AuthService
     
     public async Task<ActionResult<User>> Register(RegisterDto model)
     {
+        // Validacion de contrase;a
         var passwordValidators = _userManager.PasswordValidators;
 
         foreach (var validator in passwordValidators)
@@ -42,12 +43,13 @@ public class AuthService
             }
         }
 
+        // Verificacion si el usuario existe
         var existingUser = await _userManager.FindByEmailAsync(model.Email);
         if (existingUser != null)
         {
             return new BadRequestObjectResult(new { message = "Email already exists" });
         }
-
+        // Declaracion de variable
         User user;
         
         if (model.BeOrganizer)
@@ -59,9 +61,11 @@ public class AuthService
             user = CreateUser(model);
         }
 
+        // Se genera el token que se enviara por correo
         string token = CodeGeneration.New();
         try
         {
+            // Envia de manera asincrona el correo de verificacion
             await _authMailService.SendVerificationEmailAsync(user.Email, user.UserName, token);
         }
         catch (Exception e)
@@ -70,6 +74,7 @@ public class AuthService
             return new StatusCodeResult(500);
         }
         
+        // Cachea los datos
         CacheRegisterDto cacheRegisterDto = new CacheRegisterDto
         {
             DataUser = user,
