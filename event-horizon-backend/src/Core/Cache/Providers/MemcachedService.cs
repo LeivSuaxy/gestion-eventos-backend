@@ -3,6 +3,7 @@ using event_horizon_backend.Core.Cache.Interfaces;
 
 namespace event_horizon_backend.Core.Cache.Providers;
 
+// MemcachedService class that implements ICacheService interface for caching operations using Enyim.Caching
 public class MemcachedService : ICacheService
 {
     private readonly IMemcachedClient _cache;

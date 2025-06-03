@@ -1,5 +1,6 @@
 namespace event_horizon_backend.Core.Models;
 
+// PaginationParameters class to hold pagination settings for API responses
 public class PaginationParameters
 {
     private const int MaxPageSize = 50;
@@ -14,6 +15,7 @@ public class PaginationParameters
     }
 }
 
+// PagedResponse class to encapsulate paginated data along with metadata
 public class PagedResponse<T> where T : class
 {
     public int PageNumber { get; set; }

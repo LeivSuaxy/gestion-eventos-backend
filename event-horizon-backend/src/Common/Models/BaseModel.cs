@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+// Clase abstracta que representa un modelo base para garantizar auditoria en los modelos.
 public class BaseModel
 {
     [Key]

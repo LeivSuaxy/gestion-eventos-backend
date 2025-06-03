@@ -4,6 +4,7 @@ using System.Text.Json;
 
 namespace event_horizon_backend.Core.Cache.Providers;
 
+// RedisCacheService class that implements ICacheService interface for caching operations using StackExchange.Redis
 public class RedisCacheService : ICacheService
 {
     private readonly IDatabase _cache;

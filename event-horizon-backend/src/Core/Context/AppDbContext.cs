@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace event_horizon_backend.Core.Context;
 
+// ORM para la base de datos, hereda de IdentityDbContext para manejar la autenticación y autorización.
 public class AppDbContext: IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

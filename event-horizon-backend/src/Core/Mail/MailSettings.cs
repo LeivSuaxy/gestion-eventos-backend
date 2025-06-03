@@ -1,5 +1,6 @@
 namespace event_horizon_backend.Core.Mail;
 
+// MailSettings class to hold configuration settings for sending emails
 public class MailSettings
 {
     public string Host { get; set; }

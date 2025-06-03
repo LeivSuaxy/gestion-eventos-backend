@@ -3,6 +3,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace event_horizon_backend.Core.Cache.Providers;
 
+// MemoryCacheService class that implements ICacheService interface for caching operations using IMemoryCache
 public class MemoryCacheService : ICacheService
 {
     private readonly IMemoryCache _cache;

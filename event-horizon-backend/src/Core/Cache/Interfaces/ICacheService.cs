@@ -1,5 +1,6 @@
 namespace event_horizon_backend.Core.Cache.Interfaces;
 
+// Interface for cache service to handle caching operations
 public interface ICacheService
 {
     Task<T?> GetAsync<T>(string key);

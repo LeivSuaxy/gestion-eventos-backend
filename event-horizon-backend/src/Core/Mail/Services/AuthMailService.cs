@@ -11,6 +11,7 @@ using MimeKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 
+// AuthMailService class that handles sending verification emails using SMTP
 public class AuthMailService
 {
     private readonly MailSettings _mailSettings;
