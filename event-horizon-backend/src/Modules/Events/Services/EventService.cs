@@ -23,27 +23,33 @@ public class EventService
 
     public async Task<ActionResult<EventModel>> Create(EventPublicCreateDTO eventPublicCreate)
     {
+        // Verifica si la categoría existe
         CategoryModel? category = await _context.Categories.FindAsync(eventPublicCreate.CategoryId);
 
         if (category == null)
             return new BadRequestObjectResult($"Category with ID {eventPublicCreate.CategoryId} does not exist.");
 
+        // Busca si el usuario existe
         User? user = await _context.Users.FindAsync(eventPublicCreate.OrganizerId);
 
         if (user == null)
             return new BadRequestObjectResult($"User with ID {eventPublicCreate.OrganizerId} does not exists");
 
+        // Mapea el modelo de evento
         EventModel eventModel = _mapper.Map<EventModel>(eventPublicCreate);
 
+        // Asigna la categoría y el organizador al evento
         eventModel.Category = category;
         eventModel.Organizer = user;
-
+        // Se gurda en la bd
         _context.Events.Add(eventModel);
         await _context.SaveChangesAsync();
 
         return new OkObjectResult(eventModel);
     }
 
+    // Obtiene elementos paginados
+    // Paginaicion significa que se obtienen los elementos en partes, por ejemplo, 10 elementos por página
     public async Task<PagedResponse<EventModel>> GetPaginated(PaginationParameters parameters)
     {
         IQueryable<EventModel> events = _context.Events.AsQueryable();
@@ -56,6 +62,7 @@ public class EventService
         return pagedResult;
     }
 
+    // Simplemente una query compleja
     public object GetFeaturedEvents(int quantity, DateTime currentDate)
     {
         // Get top 2 events with highest attendance
