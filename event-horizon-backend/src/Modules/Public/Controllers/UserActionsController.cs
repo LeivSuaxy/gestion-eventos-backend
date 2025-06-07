@@ -24,7 +24,7 @@ public class UserActionsController : ControllerBase
         _service = service;
     }
 
-    [HttpPost]
+    [HttpPost("inscribe/")]
     public async Task<ActionResult<String>> InscribeEvent([FromBody] Guid eventId)
     {
         string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
