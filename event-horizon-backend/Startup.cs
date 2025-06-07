@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using StackExchange.Redis;
 using System.Text.Json;
 using DotNetEnv;
+using event_horizon_backend.Core.Services;
 using event_horizon_backend.Modules.Authentication.Services;
 using event_horizon_backend.Modules.Events.Services;
 using event_horizon_backend.Modules.Organizer.Services;
@@ -91,7 +92,8 @@ public class EventHorizonBuilder
             typeof(OrganizerService),
             typeof(UserActionsService),
             typeof(AssistanceService),
-            typeof(AuthService)
+            typeof(AuthService),
+            typeof(ImageHandler),
         };
 
         foreach (Type service in objects)

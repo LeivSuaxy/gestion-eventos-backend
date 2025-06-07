@@ -29,7 +29,6 @@
 
     <ItemGroup>
         <Folder Include="src\Common\Interfaces\" />
-        <Folder Include="src\Core\Services\" />
         <Folder Include="src\Modules\Authentication\Tests\"/>
         <Folder Include="src\Modules\Category\DTO\PublicDTO\" />
         <Folder Include="src\Modules\Category\Services\"/>
@@ -40,7 +39,6 @@
         <Folder Include="src\Modules\Organizer\Mappers\" />
         <Folder Include="src\Modules\Organizer\Models\" />
         <Folder Include="src\Modules\Organizer\Tests\" />
-        <Folder Include="src\Modules\Public\DTO\" />
         <Folder Include="src\Modules\Public\Mappers\" />
         <Folder Include="src\Modules\Public\Tests\" />
         <Folder Include="src\Modules\Users\DTO\" />

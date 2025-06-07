@@ -21,6 +21,8 @@ public class EventPublicCreateDTO
     [Required]
     public int Duration { get; set; }
     
+    public IFormFile? Image { get; set; }
+    
     public bool RequireAcceptance { get; set; } = false;
     
     public int LimitParticipants { get; set; } = 30;

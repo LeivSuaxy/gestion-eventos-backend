@@ -3,6 +3,7 @@ using event_horizon_backend.Core.Context;
 using event_horizon_backend.Core.Models;
 using event_horizon_backend.Modules.Events.Models;
 using event_horizon_backend.Modules.Events.Services;
+using event_horizon_backend.Modules.Public.DTO;
 
 namespace event_horizon_backend.Modules.Public.Services;
 
@@ -23,7 +24,7 @@ public class PublicService
     {
         DateTime currentDate = DateTime.UtcNow;
         var featuredEvents = _eventService.GetFeaturedEvents(parameters.PageSize, currentDate);
-        PagedResponse<EventModel> events = await _eventService.GetPaginated(parameters);
+        PagedResponse<EventResponseDTO> events = await _eventService.GetPaginated(parameters);
         
         return new
         {
@@ -37,7 +38,7 @@ public class PublicService
     {
         DateTime currentDate = DateTime.UtcNow;
         var featuredEvents = _eventService.GetFeaturedEvents(2, currentDate);
-        PagedResponse<EventModel> events = await _eventService.GetPaginated(parameters);
+        PagedResponse<EventResponseDTO> events = await _eventService.GetPaginated(parameters);
         
         return new
         {
