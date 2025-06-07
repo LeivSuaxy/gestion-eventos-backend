@@ -13,6 +13,7 @@ public class TokenService
         _configuration = configuration;
     }
 
+    // Generador de token JWT
     public string GenerateToken(User user, IList<string> roles)
     {
         var claims = new List<Claim>

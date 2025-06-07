@@ -4,6 +4,7 @@ namespace event_horizon_backend.Modules.Authentication.Services;
 
 public class RolesService
 {
+    // Mecanismo de creacion de roles
     public static async Task InitializeRoles(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();

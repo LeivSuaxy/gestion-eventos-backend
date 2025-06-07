@@ -1,10 +1,12 @@
 using AutoMapper;
 using event_horizon_backend.Core.Context;
 using event_horizon_backend.Core.Models;
+using event_horizon_backend.Modules.Category.Models;
 using event_horizon_backend.Modules.Events.Models;
 using event_horizon_backend.Modules.Public.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace event_horizon_backend.Modules.Public.Controllers;
 
@@ -57,5 +59,13 @@ public class PublicController : ControllerBase
         
         var eventModel = await _context.Events.FindAsync(id);
         return eventModel == null ? NotFound() : _mapper.Map<EventModel>(eventModel);
+    }
+
+    [HttpGet("categories")]
+    [AllowAnonymous]
+    public async Task<ActionResult<CategoryModel>> GetCategories()
+    {
+        List<CategoryModel>? categories = await _context.Categories.ToListAsync();
+        return categories == null ? NotFound() : Ok(categories);
     }
 }

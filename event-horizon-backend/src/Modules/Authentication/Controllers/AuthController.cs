@@ -97,7 +97,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Verify([FromQuery] string email, [FromQuery] string token)
     {
         var userData = await _cacheService.GetAsync<CacheRegisterDto>(email);
-
+        
+        // Verificacion de existencia de datos en cache
         if (userData == null)
             return BadRequest(new { message = "Expired Token" });
 
@@ -105,7 +106,7 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Invalid Token" });
 
         User user = userData.DataUser;
-        
+        // Crear usuario en la base de datos
         var result = await _userManager.CreateAsync(user, userData.Password);
 
         if (!result.Succeeded)
