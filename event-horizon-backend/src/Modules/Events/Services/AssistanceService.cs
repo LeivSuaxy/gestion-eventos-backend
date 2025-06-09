@@ -2,6 +2,7 @@ using AutoMapper;
 using event_horizon_backend.Core.Context;
 using event_horizon_backend.Modules.Events.Models;
 using event_horizon_backend.Modules.Users.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace event_horizon_backend.Modules.Events.Services;
 
@@ -57,5 +58,13 @@ public class AssistanceService
             .Count(a => a.Event.Id == eventId 
                         && a.Active 
                         && a.DeletedAt == null);
+    }
+    
+    public async Task<IEnumerable<Guid>> GetAssistanceByUserId(Guid userId)
+    {
+        return await _context.Assistance
+            .Where(a => a.Participant.Id == userId && a.Active && a.DeletedAt == null)
+            .Select(a => a.Event.Id)
+            .ToListAsync();
     }
 }
