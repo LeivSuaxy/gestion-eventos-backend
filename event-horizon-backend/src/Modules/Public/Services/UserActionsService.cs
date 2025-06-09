@@ -54,4 +54,14 @@ public class UserActionsService
         await _context.SaveChangesAsync();
         return new OkObjectResult("Successfully inscribed");
     }
+
+    public async Task<ActionResult> GetInscriptions(Guid userId)
+    {
+        IEnumerable<Guid> list = await _assistanceService.GetAssistanceByUserId(userId);
+        
+        if (list == null || !list.Any())
+            return new NotFoundObjectResult("No inscriptions found for this user");
+        
+        return new OkObjectResult(list);
+    }
 }

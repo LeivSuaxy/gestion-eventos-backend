@@ -46,5 +46,29 @@ public class UserActionsController : ControllerBase
 
         return BadRequest("Nothing has worked");
     }
+
+    [HttpGet("inscriptions/")]
+    public async Task<ActionResult<IEnumerable<Guid>>> GetInscriptions()
+    {
+        string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        if (userId == null)
+            return BadRequest("User ID not found in token");
+        
+        Guid userGuid = Guid.Parse(userId);
+
+        ActionResult result = await _service.GetInscriptions(userGuid);
+        
+        if (result is BadRequestObjectResult badRequest)
+            return BadRequest(badRequest.Value);
+
+        if (result is NotFoundObjectResult notFound)
+            return NotFound(notFound.Value);
+
+        if (result is OkObjectResult ok)
+            return Ok(ok.Value);
+        
+        return BadRequest("Unexpected result");
+    }
     
 }
